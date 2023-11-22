@@ -5,7 +5,7 @@
 #include <unistd.h>
 
 void initialiser_args(args_t *args) {
-    args->verbosite = 3;
+    args->verbosite = VERBOSITE_DEFAULT;
     args->interface = NULL;
     args->fichier = NULL;
     args->filtre = NULL;
@@ -29,39 +29,41 @@ int parse_args(int argc, char *argv[], args_t *args) {
             break;
         case 'v':
             args->verbosite = atoi(optarg);
+            if (args->verbosite < 1 || args->verbosite > 3) {
+                fprintf(stderr, "Niveau de verbosité invalide : %s\n", optarg);
+                afficher_aide();
+                exit(EXIT_FAILURE);
+            }
             break;
         case 'h':
             afficher_aide();
-            return -1; 
+            exit(EXIT_FAILURE);
         default:
-            fprintf(stderr, "Option inconnu\n",
-                    argv[0]);
+            fprintf(stderr, "Option inconnue: %c\n", optopt);
             afficher_aide();
-            return -1;
+            exit(EXIT_FAILURE);
         }
     }
-    
-    if (args->interface == NULL || args->fichier == NULL) {
-        fprintf(stderr, "\ttu dois choisir l'option -i ou l'option -f\n",
-                argv[0]);
-        afficher_aide();
-        return -1;
-    }else if(args->interface != NULL && args->fichier != NULL){
-        fprintf(stderr, "\ttu ne peux pas choisir les deux options à la fois\n",
-                argv[0]);
-        afficher_aide();
-        return -1;
-    }   
 
+    if (args->interface == NULL && args->fichier == NULL) {
+        fprintf(stderr, "Vous devez choisir l'option -i ou l'option -f\n");
+        afficher_aide();
+        exit(EXIT_FAILURE);
+    } else if (args->interface != NULL && args->fichier != NULL) {
+        fprintf(stderr,
+                "Vous ne pouvez pas choisir les options -i et -f à la fois\n");
+        afficher_aide();
+        exit(EXIT_FAILURE);
+    }
 
     return 0;
 }
 
 void afficher_aide() {
-    printf("\tUsage:\n");
-    printf("\t  -i <interface> : interface pour l'analyse live\n");
-    printf("\t  -o <fichier> : fichier d'entrée pour l'analyse offline\n");
-    printf("\t  -f <filtre> : filtre BPF(optionel)\n");
-    printf("\t  -v <1..3> : niveau de verbosité(1=très concis; 2=synthétique; "
+    printf("Usage: analyseur\n"
+    "-i <interface> : interface pour l'analyse live\n"
+    "-o <fichier> : fichier d'entrée pour l'analyse offline\n"
+    "-f <filtre> : filtre BPF(optionel)\n"
+    "-v <1..3> : niveau de verbosité(1=très concis; 2=synthétique; "
            "3=complet)\n");
 }
