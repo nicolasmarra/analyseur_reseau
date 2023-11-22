@@ -1,11 +1,11 @@
 #include "analyseur-args.h"
+#include "net/ethernet.h"
+#include "netinet/ether.h"
+#include "netinet/if_ether.h"
 #include "pcap.h"
 #include "utiles.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "netinet/if_ether.h"
-#include "net/ethernet.h"
-#include "netinet/ether.h"
 
 int nbr_paquet = 0;
 
@@ -16,17 +16,14 @@ void traiter_paquet(u_char *args, const struct pcap_pkthdr *header,
     struct ether_header *ethernet_header;
     ethernet_header = (struct ether_header *)paquet;
 
+            const char *type = (ntohs(ethernet_header->ether_type) == ETHERTYPE_IP) ? "IPv4" :
+                               (ntohs(ethernet_header->ether_type) == ETHERTYPE_IPV6) ? "IPv6" :
+                               "";
     printf("========================================\n");
     printf("Trame: %d\n", ++nbr_paquet);
     printf("ETHERNET\n");
 
     if (verbosite > 1) {
-
-        printf("Adresse MAC source : %02x:%02x:%02x:%02x:%02x:%02x\n",
-               ethernet_header->ether_shost[0], ethernet_header->ether_shost[1],
-               ethernet_header->ether_shost[2], ethernet_header->ether_shost[3],
-               ethernet_header->ether_shost[4],
-               ethernet_header->ether_shost[5]);
 
         printf("Adresse MAC destination : %02x:%02x:%02x:%02x:%02x:%02x\n",
                ethernet_header->ether_dhost[0], ethernet_header->ether_dhost[1],
@@ -34,15 +31,21 @@ void traiter_paquet(u_char *args, const struct pcap_pkthdr *header,
                ethernet_header->ether_dhost[4],
                ethernet_header->ether_dhost[5]);
 
-        
+        printf("Adresse MAC source : %02x:%02x:%02x:%02x:%02x:%02x\n",
+               ethernet_header->ether_shost[0], ethernet_header->ether_shost[1],
+               ethernet_header->ether_shost[2], ethernet_header->ether_shost[3],
+               ethernet_header->ether_shost[4],
+               ethernet_header->ether_shost[5]);
 
-    } else if (verbosite > 2) {
-        printf("Type : %04x\n", ethernet_header->ether_type);
+    } 
+    if (verbosite > 2) {
+        printf("Type: %s (0x%02x%02x)\n", type,
+               (ntohs(ethernet_header->ether_type) & 0xFF00) >> 8,
+               ntohs(ethernet_header->ether_type) & 0x00FF);
         printf("Longueur : %d\n", header->len);
     }
 
-    switch (ntohs(ethernet_header->ether_type))
-    {
+    switch (ntohs(ethernet_header->ether_type)) {
     case ETHERTYPE_IP:
         printf("IP\n");
         break;
@@ -50,7 +53,7 @@ void traiter_paquet(u_char *args, const struct pcap_pkthdr *header,
         printf("ARP\n");
         break;
     case ETHERTYPE_REVARP:
-        printf("RARP\n");   
+        printf("RARP\n");
         break;
     case ETHERTYPE_IPV6:
         printf("IPV6\n");
@@ -62,10 +65,10 @@ void traiter_paquet(u_char *args, const struct pcap_pkthdr *header,
         printf("VLAN\n");
         break;
     default:
+        printf("Type Ethernet inconnu : %04x\n",
+               ntohs(ethernet_header->ether_type));
         break;
     }
-
-
 }
 
 int main(int argc, char *argv[]) {
@@ -115,7 +118,6 @@ int main(int argc, char *argv[]) {
 
         // Fermer la session de capture
         pcap_close(handle);
-
     }
 
     return 0;
