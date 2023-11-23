@@ -58,7 +58,7 @@ void traiter_paquet(u_char *args, const struct pcap_pkthdr *header,
         printf("RARP\n");
         break;
     case ETHERTYPE_IPV6:
-        printf("IPV6\n");
+        traiter_ipv6(paquet, verbosite);
         break;
     case ETHERTYPE_LOOPBACK:
         printf("LOOPBACK\n");

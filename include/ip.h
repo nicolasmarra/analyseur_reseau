@@ -20,6 +20,6 @@ void traiter_ipv4(const u_char *paquet, int verbosite);
     @param paquet : le paquet à traiter
     @param verbosite : le niveau de verbosité
 */
-//void traiter_ipv6(const u_char *paquet, int verbosite);
+void traiter_ipv6(const u_char *paquet, int verbosite);
 
 #endif
