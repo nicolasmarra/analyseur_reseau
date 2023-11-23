@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "in.h": "c",
+        "ip6.h": "c",
+        "ip.h": "c"
+    }
+}

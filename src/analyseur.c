@@ -1,4 +1,5 @@
-#include "analyseur-args.h"
+#include "args.h"
+#include "ip.h"
 #include "net/ethernet.h"
 #include "netinet/ether.h"
 #include "netinet/if_ether.h"
@@ -16,9 +17,10 @@ void traiter_paquet(u_char *args, const struct pcap_pkthdr *header,
     struct ether_header *ethernet_header;
     ethernet_header = (struct ether_header *)paquet;
 
-            const char *type = (ntohs(ethernet_header->ether_type) == ETHERTYPE_IP) ? "IPv4" :
-                               (ntohs(ethernet_header->ether_type) == ETHERTYPE_IPV6) ? "IPv6" :
-                               "";
+    const char *type =
+        (ntohs(ethernet_header->ether_type) == ETHERTYPE_IP)     ? "IPv4"
+        : (ntohs(ethernet_header->ether_type) == ETHERTYPE_IPV6) ? "IPv6"
+                                                                 : "";
     printf("========================================\n");
     printf("Trame: %d\n", ++nbr_paquet);
     printf("ETHERNET\n");
@@ -36,8 +38,7 @@ void traiter_paquet(u_char *args, const struct pcap_pkthdr *header,
                ethernet_header->ether_shost[2], ethernet_header->ether_shost[3],
                ethernet_header->ether_shost[4],
                ethernet_header->ether_shost[5]);
-
-    } 
+    }
     if (verbosite > 2) {
         printf("Type: %s (0x%02x%02x)\n", type,
                (ntohs(ethernet_header->ether_type) & 0xFF00) >> 8,
@@ -47,7 +48,7 @@ void traiter_paquet(u_char *args, const struct pcap_pkthdr *header,
 
     switch (ntohs(ethernet_header->ether_type)) {
     case ETHERTYPE_IP:
-        printf("IP\n");
+        traiter_ipv4(paquet, verbosite);
         break;
     case ETHERTYPE_ARP:
         printf("ARP\n");

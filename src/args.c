@@ -1,4 +1,4 @@
-#include "analyseur-args.h"
+#include "args.h"
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -61,9 +61,9 @@ int parse_args(int argc, char *argv[], args_t *args) {
 
 void afficher_aide() {
     printf("Usage: analyseur\n"
-    "-i <interface> : interface pour l'analyse live\n"
-    "-o <fichier> : fichier d'entrée pour l'analyse offline\n"
-    "-f <filtre> : filtre BPF(optionel)\n"
-    "-v <1..3> : niveau de verbosité(1=très concis; 2=synthétique; "
+           "-i <interface> : interface pour l'analyse live\n"
+           "-o <fichier> : fichier d'entrée pour l'analyse offline\n"
+           "-f <filtre> : filtre BPF(optionel)\n"
+           "-v <1..3> : niveau de verbosité(1=très concis; 2=synthétique; "
            "3=complet)\n");
 }
