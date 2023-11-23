@@ -81,7 +81,6 @@ int main(int argc, char *argv[]) {
     pcap_t *handle;
 
     // interface
-    printf("verbosite : %d\n", args.verbosite);
     if (args.interface != NULL) {
 
         /*Ouverture d'une capture*/
@@ -89,18 +88,10 @@ int main(int argc, char *argv[]) {
                                 erreur_buffer);
 
         if (handle == NULL) {
-            raler(1, "Impossible d'ouvrir l'interface %s : %s\n",
+            raler(1, "Erreur lors de l'ouverture de l'interface %s : %s\n",
                   args.interface, erreur_buffer);
         }
 
-        if (pcap_loop(handle, -1, traiter_paquet, (u_char *)&args.verbosite) !=
-            0) {
-            raler(1, "Impossible de capturer un paquet : %s\n",
-                  pcap_geterr(handle));
-        }
-
-        // Fermer la session de capture
-        pcap_close(handle);
 
     }
     // fichier
@@ -109,19 +100,31 @@ int main(int argc, char *argv[]) {
         handle = pcap_open_offline(args.fichier, erreur_buffer);
 
         if (handle == NULL) {
-            raler(1, "Impossible d'ouvrir le fichier %s : %s\n", args.fichier,
-                  erreur_buffer);
+            raler(1, "Ereur lors de l'ouverture du fichier %s : %s\n",
+                  args.fichier, erreur_buffer);
         }
-
-        if (pcap_loop(handle, -1, traiter_paquet, (u_char *)&args.verbosite) !=
-            0) {
-            raler(1, "Impossible de capturer un paquet : %s\n",
-                  pcap_geterr(handle));
-        }
-
-        // Fermer la session de capture
-        pcap_close(handle);
     }
+    if (args.filtre != NULL) {
+        struct bpf_program filtre;
+        if (pcap_compile(handle, &filtre, args.filtre, 0,
+                         PCAP_NETMASK_UNKNOWN) == -1) {
+            raler(1, "Erreur lors de la compilation du filtre %s : %s\n",
+                  args.filtre, pcap_geterr(handle));
+        }
+
+        if (pcap_setfilter(handle, &filtre) == -1) {
+            raler(1, "Erreur lors de l'application du filtre %s : %s\n",
+                  args.filtre, pcap_geterr(handle));
+        }
+    }
+
+    if (pcap_loop(handle, -1, traiter_paquet, (u_char *)&args.verbosite) != 0) {
+        raler(1, "Erreur lors de la capturer du paquet : %s\n",
+              pcap_geterr(handle));
+    }
+
+    // Fermer la session de capture
+    pcap_close(handle);
 
     return 0;
 }
