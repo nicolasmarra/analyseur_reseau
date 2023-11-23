@@ -23,6 +23,7 @@ void traiter_paquet(u_char *args, const struct pcap_pkthdr *header,
                                                                  : "";
     printf("========================================\n");
     printf("Trame: %d\n", ++nbr_paquet);
+    printf("\n");
     printf("ETHERNET\n");
 
     if (verbosite > 1) {
@@ -80,6 +81,7 @@ int main(int argc, char *argv[]) {
     pcap_t *handle;
 
     // interface
+    printf("verbosite : %d\n", args.verbosite);
     if (args.interface != NULL) {
 
         /*Ouverture d'une capture*/
