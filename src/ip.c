@@ -1,13 +1,8 @@
 #include "ip.h"
-#include <netdb.h>
-#include <stdio.h>
 
 void traiter_ipv4(const u_char *paquet, int verbosite) {
     (void)paquet;
-    struct ip *ip_header;
-
-    int taille = sizeof(struct ether_header);
-    ip_header = (struct ip *)(paquet + taille);
+    struct ip *ip_header = (struct ip *)(paquet);
 
     printf("\n");
     printf("IPV4\n");
@@ -35,16 +30,15 @@ void traiter_ipv4(const u_char *paquet, int verbosite) {
 
     switch (ip_header->ip_p) {
     case IPPROTO_UDP:
-        printf("UDP\n");
-        // traiter_udp(paquet, verbosite);
+        traiter_udp(paquet + (ip_header->ip_off * 4), verbosite);
         break;
     case IPPROTO_TCP:
         printf("TCP\n");
-        // traiter_tcp(paquet, verbosite);
+        // traiter_tcp(paquet + (ip_header->ip_off * 4), verbosite);
         break;
     case IPPROTO_ICMP:
         printf("ICMP\n");
-        // traiter_icmp(paquet, verbosite);
+        // traiter_icmp(paquet + (ip_header->ip_off * 4), verbosite);
         break;
     default:
         break;
@@ -52,9 +46,7 @@ void traiter_ipv4(const u_char *paquet, int verbosite) {
 }
 
 void traiter_ipv6(const u_char *paquet, int verbosite) {
-    struct ip6_hdr *ip6_header;
-    int taille = sizeof(struct ether_header);
-    ip6_header = (struct ip6_hdr *)(paquet + taille);
+    struct ip6_hdr *ip6_header = (struct ip6_hdr *)(paquet);
 
     printf("\n");
     printf("IPV6\n");
@@ -64,11 +56,13 @@ void traiter_ipv6(const u_char *paquet, int verbosite) {
 
     if (verbosite > 2) {
         printf("Version : %d\n", ip6_header->ip6_vfc >> 4);
-        printf("Classe de trafic: 0x%.2x\n", (ntohl(ip6_header->ip6_flow) >> 20) & 0xFF);
+        printf("Classe de trafic: 0x%.2x\n",
+               (ntohl(ip6_header->ip6_flow) >> 20) & 0xFF);
         printf("Flow label: 0x%.5x\n", ntohl(ip6_header->ip6_flow) & 0xFFFFF);
-        printf("Longueur de la Payload: %d\n",
-               ntohs(ip6_header->ip6_plen));
-        printf("Header suivant : %s (%d)\n",getprotobynumber(ip6_header->ip6_nxt)->p_name, ip6_header->ip6_nxt);
+        printf("Longueur de la Payload: %d\n", ntohs(ip6_header->ip6_plen));
+        printf("Header suivant : %s (%d)\n",
+               getprotobynumber(ip6_header->ip6_nxt)->p_name,
+               ip6_header->ip6_nxt);
         printf("Limite de saut : %d\n", ip6_header->ip6_hlim);
     }
 
@@ -83,18 +77,18 @@ void traiter_ipv6(const u_char *paquet, int verbosite) {
 
     switch (ip6_header->ip6_nxt) {
     case IPPROTO_UDP:
-        printf("UDP\n");
-        // traiter_udp(paquet, verbosite);
+        traiter_udp(paquet + sizeof(struct ip6_hdr), verbosite);
         break;
     case IPPROTO_TCP:
         printf("TCP\n");
-        // traiter_tcp(paquet, verbosite);
+        // traiter_tcp(paquet + sizeof(struct ip6_hdr), verbosite);
         break;
     case IPPROTO_ICMP:
         printf("ICMP\n");
-        // traiter_icmp(paquet, verbosite);
+        // traiter_icmp(paquet + sizeof(struct ip6_hdr), verbosite);
         break;
     default:
         break;
     }
 }
+

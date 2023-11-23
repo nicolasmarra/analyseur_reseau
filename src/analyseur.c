@@ -14,8 +14,7 @@ void traiter_paquet(u_char *args, const struct pcap_pkthdr *header,
                     const u_char *paquet) {
 
     int verbosite = *(int *)args;
-    struct ether_header *ethernet_header;
-    ethernet_header = (struct ether_header *)paquet;
+    struct ether_header *ethernet_header = (struct ether_header *)paquet;
 
     const char *type =
         (ntohs(ethernet_header->ether_type) == ETHERTYPE_IP)     ? "IPv4"
@@ -49,7 +48,7 @@ void traiter_paquet(u_char *args, const struct pcap_pkthdr *header,
 
     switch (ntohs(ethernet_header->ether_type)) {
     case ETHERTYPE_IP:
-        traiter_ipv4(paquet, verbosite);
+        traiter_ipv4(paquet + sizeof(struct ether_header), verbosite);
         break;
     case ETHERTYPE_ARP:
         printf("ARP\n");
@@ -58,7 +57,7 @@ void traiter_paquet(u_char *args, const struct pcap_pkthdr *header,
         printf("RARP\n");
         break;
     case ETHERTYPE_IPV6:
-        traiter_ipv6(paquet, verbosite);
+        traiter_ipv6(paquet + sizeof(struct ether_header), verbosite);
         break;
     case ETHERTYPE_LOOPBACK:
         printf("LOOPBACK\n");
