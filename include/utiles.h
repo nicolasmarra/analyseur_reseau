@@ -1,20 +1,22 @@
 #ifndef UTILES_H
 #define UTILES_H
 
+#include "ip.h"
 #include "netinet/if_ether.h"
 #include "netinet/ip.h"
 #include "netinet/ip6.h"
+#include "tcp.h"
+#include "udp.h"
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <netinet/tcp.h>
 #include <netinet/in.h>
 #include <netinet/udp.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdnoreturn.h>
-
-#include "ip.h"
-#include "udp.h"
+#include <netinet/in.h>
 
 #define PROMISCUOUS 0
 #define CONFUS 1

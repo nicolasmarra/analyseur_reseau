@@ -1,7 +1,6 @@
 #include "ip.h"
 
 void traiter_ipv4(const u_char *paquet, int verbosite) {
-    (void)paquet;
     struct ip *ip_header = (struct ip *)(paquet);
 
     printf("\n");
@@ -28,21 +27,9 @@ void traiter_ipv4(const u_char *paquet, int verbosite) {
         printf("Adresse IP destination : %s\n", inet_ntoa(ip_header->ip_dst));
     }
 
-    switch (ip_header->ip_p) {
-    case IPPROTO_UDP:
-        traiter_udp(paquet + (ip_header->ip_off * 4), verbosite);
-        break;
-    case IPPROTO_TCP:
-        printf("TCP\n");
-        // traiter_tcp(paquet + (ip_header->ip_off * 4), verbosite);
-        break;
-    case IPPROTO_ICMP:
-        printf("ICMP\n");
-        // traiter_icmp(paquet + (ip_header->ip_off * 4), verbosite);
-        break;
-    default:
-        break;
-    }
+    traiter_protocoles(paquet + (ip_header->ip_hl * 4), verbosite,
+                       ip_header->ip_p);
+    
 }
 
 void traiter_ipv6(const u_char *paquet, int verbosite) {
@@ -75,20 +62,27 @@ void traiter_ipv6(const u_char *paquet, int verbosite) {
         printf("Adresse IP destination : %s\n", adresse_destination);
     }
 
-    switch (ip6_header->ip6_nxt) {
+    traiter_protocoles(paquet + sizeof(struct ip6_hdr), verbosite,
+                       ip6_header->ip6_nxt);
+ 
+}
+
+// créer une fonction permettant de savoir le protcole de la couche 4 et le paquet à traiter et ainsi que la verbosite
+void traiter_protocoles(const u_char *paquet, int verbosite, int protocole)
+{
+    switch (protocole)
+    {
     case IPPROTO_UDP:
-        traiter_udp(paquet + sizeof(struct ip6_hdr), verbosite);
+        traiter_udp(paquet, verbosite);
         break;
     case IPPROTO_TCP:
-        printf("TCP\n");
-        // traiter_tcp(paquet + sizeof(struct ip6_hdr), verbosite);
+        traiter_tcp(paquet, verbosite);
         break;
     case IPPROTO_ICMP:
         printf("ICMP\n");
-        // traiter_icmp(paquet + sizeof(struct ip6_hdr), verbosite);
+        // traiter_icmp(paquet, verbosite);
         break;
     default:
         break;
     }
 }
-
