@@ -15,6 +15,10 @@ void traiter_icmp(const u_char *paquet, int verbosite) {
 
     if (verbosite > 2) {
         afficher_type(icmp_header->type);
+        printf("Code : %d\n", icmp_header->code);
+        printf("Somme de contrôle : 0x%.2x\n", ntohs(icmp_header->checksum));
+        printf("Identifiant : %d (0x%.2x)\n", ntohs(icmp_header->un.echo.id), ntohs(icmp_header->un.echo.id));
+        printf("Numéro de séquence : %d (0x%.2x)\n", ntohs(icmp_header->un.echo.sequence), ntohs(icmp_header->un.echo.sequence));
     }
 }
 
@@ -24,46 +28,52 @@ void afficher_type(int type)
     switch (type)
     {
     case ICMP_ECHOREPLY:
-        printf("Echo Reply (%d)\n", type);
+        printf("%d (Echo reply) \n", type);
         break;
     case ICMP_DEST_UNREACH:
-        printf("Destination Unreachable (%d)\n", type);
+        printf("%d (Destination unreachable)\n", type);
         break;
     case ICMP_SOURCE_QUENCH:
-        printf("Source Quench (%d)\n", type);
+        printf("%d (Source quench)\n", type);
         break;
     case ICMP_REDIRECT:
-        printf("Redirect (%d)\n", type);
+        printf("%d (Redirect)\n", type);
         break;
     case ICMP_ECHO:
-        printf("Echo (%d)\n", type);
+        printf("%d (Echo request)\n", type);
+        break;
+    case ICMP_ROUTERADVERT:
+        printf("%d (Router advertisement)\n", type);
+        break;
+    case ICMP_ROUTERSOLICIT:
+        printf("%d (Router solicitation)\n", type);
         break;
     case ICMP_TIME_EXCEEDED:
-        printf("Time Exceeded (%d)\n", type);
+        printf("%d (Time exceeded)\n", type);
         break;
     case ICMP_PARAMETERPROB:
-        printf("Parameter Problem (%d)\n", type);
+        printf("%d (Parameter problem)\n", type);
         break;
     case ICMP_TIMESTAMP:
-        printf("Timestamp (%d)\n", type);
+        printf("%d (Timestamp request)\n", type);
         break;
     case ICMP_TIMESTAMPREPLY:
-        printf("Timestamp Reply (%d)\n", type);
+        printf("%d (Timestamp reply)\n", type);
         break;
     case ICMP_INFO_REQUEST:
-        printf("Information Request (%d)\n", type);
+        printf("%d (Information request)\n", type);
         break;
     case ICMP_INFO_REPLY:
-        printf("Information Reply (%d)\n", type);
+        printf("%d (Information reply)\n", type);
         break;
     case ICMP_ADDRESS:
-        printf("Address Mask Request (%d)\n", type);
+        printf("%d (Address mask request)\n", type);
         break;
     case ICMP_ADDRESSREPLY:
-        printf("Address Mask Reply (%d)\n", type);
+        printf("%d (Address mask reply)\n", type);
         break;
     default:
-        printf("Inconnu (%d)\n", type);
+        printf("%d\n", type);
         break;
     }
 }

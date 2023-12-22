@@ -4,6 +4,7 @@
         "ip6.h": "c",
         "ip.h": "c",
         "utiles.h": "c",
-        "tcp.h": "c"
+        "tcp.h": "c",
+        "internet": "c"
     }
 }

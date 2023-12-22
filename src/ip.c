@@ -28,7 +28,7 @@ void traiter_ipv4(const u_char *paquet, int verbosite) {
     }
 
     traiter_protocoles(paquet + (ip_header->ip_hl * 4), verbosite,
-                       ip_header->ip_p,4);
+                       ip_header->ip_p,VERSION_IPV4);
     
 }
 
@@ -86,7 +86,7 @@ void traiter_ipv6(const u_char *paquet, int verbosite) {
     }
 
     traiter_protocoles(paquet + sizeof(struct ip6_hdr), verbosite,
-                       ip6_header->ip6_nxt, 6);
+                       ip6_header->ip6_nxt, VERSION_IPV6);
  
 }
 
@@ -104,9 +104,9 @@ void traiter_protocoles(const u_char *paquet, int verbosite, int protocole, int 
         traiter_icmp(paquet, verbosite);
         break;
     case IPPROTO_IPIP:
-        if (version == 4)
+        if (version == VERSION_IPV4)
         traiter_ipv4(paquet, verbosite);
-        else if(version == 6)
+        else if(version == VERSION_IPV6)
         traiter_ipv6(paquet, verbosite);
         
         break;

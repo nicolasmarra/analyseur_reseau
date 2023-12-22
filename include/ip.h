@@ -4,6 +4,9 @@
 #include "utiles.h"
 #include <netinet/in.h>
 
+#define VERSION_IPV6 6
+#define VERSION_IPV4 4
+
 /*
     @brief Fonction qui traite les paquets IPv4
     @param paquet : le paquet à traiter
