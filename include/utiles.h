@@ -7,9 +7,9 @@
 #include "netinet/ip6.h"
 #include "tcp.h"
 #include "udp.h"
+#include "arp.h"
 #include <arpa/inet.h>
 #include <netdb.h>
-#include <netinet/tcp.h>
 #include <netinet/in.h>
 #include <netinet/udp.h>
 #include <stdarg.h>

@@ -51,7 +51,7 @@ void traiter_paquet(u_char *args, const struct pcap_pkthdr *header,
         traiter_ipv4(paquet + sizeof(struct ether_header), verbosite);
         break;
     case ETHERTYPE_ARP:
-        printf("ARP\n");
+        traiter_arp(paquet + sizeof(struct ether_header), verbosite);
         break;
     case ETHERTYPE_REVARP:
         printf("RARP\n");

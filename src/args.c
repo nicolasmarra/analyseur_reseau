@@ -13,7 +13,6 @@ void initialiser_args(args_t *args) {
 
 int parse_args(int argc, char *argv[], args_t *args) {
     initialiser_args(args);
-    opterr = 0;
 
     int opt;
     while ((opt = getopt(argc, argv, "i:o:f:v:h")) != -1) {

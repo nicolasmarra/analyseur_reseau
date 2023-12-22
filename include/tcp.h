@@ -2,8 +2,8 @@
 #define TCP_H
 
 
+#include <netinet/tcp.h>
 #include "utiles.h"
-
 
 /*
     @brief Fonction qui traite les paquets TCP
@@ -17,13 +17,13 @@ void traiter_tcp(const u_char *paquet, int verbosite);
     @param tcp_header: structure contenant les flags
 
 */
-//void traiter_flags(struct tcphdr *tcp);
+void traiter_flags(struct tcphdr *tcp);
 
 /*
     @brief Fonction qui traite les options TCP
     @param tcp_header: structure contenant les options
 
 */
-//void traiter_options(struct tcphdr *tcp_header);
+void traiter_options(struct tcphdr *tcp_header);
 
 #endif
