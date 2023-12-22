@@ -16,8 +16,8 @@ void traiter_ipv4(const u_char *paquet, int verbosite) {
                ntohs(ip_header->ip_id));
         printf("Flags : 0x%.2x\n", ntohs(ip_header->ip_off));
         printf("TTL : %d\n", ip_header->ip_ttl);
-        printf("Protocole : %s (%d)\n",
-               getprotobynumber(ip_header->ip_p)->p_name, ip_header->ip_p);
+        printf("Protocole : ");
+        afficher_type_protocole_IP(ip_header->ip_p);
         printf("Somme de contrôle : 0x%.2x (%d)\n", ntohs(ip_header->ip_sum),
                ntohs(ip_header->ip_sum));
     }
@@ -28,8 +28,32 @@ void traiter_ipv4(const u_char *paquet, int verbosite) {
     }
 
     traiter_protocoles(paquet + (ip_header->ip_hl * 4), verbosite,
-                       ip_header->ip_p);
+                       ip_header->ip_p,4);
     
+}
+
+void afficher_type_protocole_IP(int protocole)
+{
+    switch (protocole)
+    {
+    case IPPROTO_ICMP:
+        printf("ICMP (%d)\n", protocole);
+        break;
+    
+    case IPPROTO_TCP:
+        printf("TCP (%d)\n", protocole);
+        break;
+    
+    case IPPROTO_UDP:
+        printf("UDP (%d)\n", protocole);
+        break;
+    case IPPROTO_IPIP:
+        printf("IP in IP (%d)\n", protocole);
+        break;
+    default:
+        printf("(%d)\n", protocole);
+        break;
+    }
 }
 
 void traiter_ipv6(const u_char *paquet, int verbosite) {
@@ -47,9 +71,8 @@ void traiter_ipv6(const u_char *paquet, int verbosite) {
                (ntohl(ip6_header->ip6_flow) >> 20) & 0xFF);
         printf("Flow label: 0x%.5x\n", ntohl(ip6_header->ip6_flow) & 0xFFFFF);
         printf("Longueur de la Payload: %d\n", ntohs(ip6_header->ip6_plen));
-        printf("Header suivant : %s (%d)\n",
-               getprotobynumber(ip6_header->ip6_nxt)->p_name,
-               ip6_header->ip6_nxt);
+        printf("Header suivant : ");
+        afficher_type_protocole_IP(ip6_header->ip6_nxt);
         printf("Limite de saut : %d\n", ip6_header->ip6_hlim);
     }
 
@@ -63,12 +86,11 @@ void traiter_ipv6(const u_char *paquet, int verbosite) {
     }
 
     traiter_protocoles(paquet + sizeof(struct ip6_hdr), verbosite,
-                       ip6_header->ip6_nxt);
+                       ip6_header->ip6_nxt, 6);
  
 }
 
-// créer une fonction permettant de savoir le protcole de la couche 4 et le paquet à traiter et ainsi que la verbosite
-void traiter_protocoles(const u_char *paquet, int verbosite, int protocole)
+void traiter_protocoles(const u_char *paquet, int verbosite, int protocole, int version)
 {
     switch (protocole)
     {
@@ -79,8 +101,14 @@ void traiter_protocoles(const u_char *paquet, int verbosite, int protocole)
         traiter_tcp(paquet, verbosite);
         break;
     case IPPROTO_ICMP:
-        printf("ICMP\n");
-        // traiter_icmp(paquet, verbosite);
+        traiter_icmp(paquet, verbosite);
+        break;
+    case IPPROTO_IPIP:
+        if (version == 4)
+        traiter_ipv4(paquet, verbosite);
+        else if(version == 6)
+        traiter_ipv6(paquet, verbosite);
+        
         break;
     default:
         break;

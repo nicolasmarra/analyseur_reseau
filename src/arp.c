@@ -7,9 +7,6 @@ void traiter_arp(const u_char *paquet, int verbosite) {
     printf("\n");
     printf("ARP\n");
 
-    if (verbosite > 1) {
-    }
-
     if (verbosite > 2) {
         afficher_type_materiel(ntohs(arp_header->ar_hrd));
         afficher_type_protocole(ntohs(arp_header->ar_pro));
@@ -17,9 +14,13 @@ void traiter_arp(const u_char *paquet, int verbosite) {
         printf("Longueur des adresses protocole : %d\n", arp_header->ar_pln);
         afficher_operation(ntohs(arp_header->ar_op));
 
-        afficher_adresses(arp_header->ar_hln, arp_header->ar_pln, paquet + sizeof(struct arphdr));
-
     }
+
+    if (verbosite > 1) {
+    afficher_adresses(arp_header->ar_hln, arp_header->ar_pln, paquet + sizeof(struct arphdr));
+    }
+
+    
 }
 
 
@@ -56,7 +57,7 @@ void afficher_type_materiel(int materiel) {
         printf("IEEE 1394 IPv4 (%d)\n", materiel);
         break;
     default:
-        printf("Inconnu\n");
+        printf("Inconnu (%d)\n", materiel);
         break;
     }
 }
@@ -77,7 +78,7 @@ void afficher_type_protocole(int protocole) {
         printf("RARP (0x%04x)\n", protocole);
         break;
     default:
-        printf("Inconnu\n");
+        printf("Inconnu (0x%04x)\n", protocole);
         break;
     }
 }
@@ -107,7 +108,7 @@ void afficher_operation(int opcode) {
         printf("NAK InARP (%d)\n", opcode);
         break;
     default:
-        printf("Inconnu\n");
+        printf("Inconnu (%d)\n", opcode);
         break;
     }
 }
