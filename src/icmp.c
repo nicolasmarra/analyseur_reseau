@@ -10,7 +10,7 @@ void traiter_icmp(const u_char *paquet, int verbosite) {
     printf("ICMP\n");
 
     if (verbosite > 1) {
-
+        
     }
 
     if (verbosite > 2) {

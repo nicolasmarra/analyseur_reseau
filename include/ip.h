@@ -35,6 +35,6 @@ void afficher_type_protocole_IP(int protocole);
     @param protocole : le protocole à traiter
     @param version : la version du protocole    
 */
-void traiter_protocoles(const u_char *paquet, int verbosite, int protocole, int version);
+void traiter_protocoles(const u_char *paquet, int taille, int verbosite, int protocole, int version);
 
 #endif

@@ -27,7 +27,8 @@ void traiter_ipv4(const u_char *paquet, int verbosite) {
         printf("Adresse IP destination : %s\n", inet_ntoa(ip_header->ip_dst));
     }
 
-    traiter_protocoles(paquet + (ip_header->ip_hl * 4), verbosite,
+    int taille = ntohs(ip_header->ip_len) - (ip_header->ip_hl * 4);
+    traiter_protocoles(paquet + (ip_header->ip_hl * 4),taille , verbosite,
                        ip_header->ip_p,VERSION_IPV4);
     
 }
@@ -85,12 +86,12 @@ void traiter_ipv6(const u_char *paquet, int verbosite) {
         printf("Adresse IP destination : %s\n", adresse_destination);
     }
 
-    traiter_protocoles(paquet + sizeof(struct ip6_hdr), verbosite,
+    traiter_protocoles(paquet + sizeof(struct ip6_hdr), ntohs(ip6_header->ip6_plen), verbosite,
                        ip6_header->ip6_nxt, VERSION_IPV6);
  
 }
 
-void traiter_protocoles(const u_char *paquet, int verbosite, int protocole, int version)
+void traiter_protocoles(const u_char *paquet, int taille, int verbosite, int protocole, int version)
 {
     switch (protocole)
     {
@@ -98,7 +99,7 @@ void traiter_protocoles(const u_char *paquet, int verbosite, int protocole, int 
         traiter_udp(paquet, verbosite);
         break;
     case IPPROTO_TCP:
-        traiter_tcp(paquet, verbosite);
+        traiter_tcp(paquet, taille, verbosite);
         break;
     case IPPROTO_ICMP:
         traiter_icmp(paquet, verbosite);

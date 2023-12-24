@@ -29,4 +29,5 @@ $(OBJ): $(OBJDIR)/%.o:  $(SRCDIR)/%.c $(INCLUDES)
 .PHONY: clean cov
 clean:
 	rm -rf $(OBJDIR)/* $(TARGET)
+	rm -rf $(BINDIR) $(OBJDIR)
 
