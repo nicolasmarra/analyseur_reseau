@@ -6,7 +6,13 @@ int traiter_ftp(const u_char *paquet, int taille, int verbosite) {
     printf("\n");
     printf("FTP\n");
 
+    if(verbosite > 1)
+    {
+        
+    }
+
     if (verbosite > 2) {
+        
         /*char *fin_commande = strstr((char *)paquet, "\r\n");
 
         if (fin_commande != NULL) {

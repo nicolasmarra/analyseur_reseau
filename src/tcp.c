@@ -30,7 +30,8 @@ void traiter_tcp(const u_char *paquet, int taille, int verbosite) {
 
     // Traitement des ports
     traiter_port_tcp(ntohs(tcp_header->source), ntohs(tcp_header->dest),
-                     paquet + 4 * tcp_header->th_off, taille - 4 *tcp_header->th_off, verbosite);
+                     paquet + 4 * tcp_header->th_off,
+                     taille - 4 * tcp_header->th_off, verbosite);
 }
 
 void traiter_flags(struct tcphdr *tcp_header) {
@@ -63,21 +64,25 @@ void traiter_options(struct tcphdr *tcp_header) {
     }
 }
 
-void traiter_port_tcp(int port_source, int port_destination, const u_char *paquet,int taille, int verbosite)
-{
+void traiter_port_tcp(int port_source, int port_destination,
+                      const u_char *paquet, int taille, int verbosite) {
     // FTP
+    if ((port_source == PORT_FTP || port_source == PORT_FTP_DATA) ||
+        (port_destination == PORT_FTP_DATA || port_destination == PORT_FTP) ||
+        ((port_destination == port_ftp_data || port_source == port_ftp_data) &&
+         port_ftp_data != 0)) {
 
-    if ((port_source == PORT_FTP || port_source == PORT_FTP_DATA) || (port_destination == PORT_FTP_DATA || port_destination == PORT_FTP) || ((port_destination == port_ftp_data || port_source == port_ftp_data) && port_ftp_data != 0)) {
-        
-        if(taille > 0){
-            
-        int port = traiter_ftp(paquet, taille, verbosite);
-        if (port > 0)
-        {
-            port_ftp_data = port;
-        }   
+        if (taille > 0) {
 
-        } 
+            int port = traiter_ftp(paquet, taille, verbosite);
+            if (port > 0)
+                port_ftp_data = port;
+        }
     }
 
+    // POP
+    if (port_source == PORT_POP || port_destination == PORT_POP) {
+        if (taille > 0)
+            traiter_pop(paquet, taille, verbosite);
+    }
 }
