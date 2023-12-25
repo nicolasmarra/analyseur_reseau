@@ -93,10 +93,17 @@ void traiter_port_tcp(int port_source, int port_destination,
     }
 
     // HTTP
-    if (port_source == PORT_HTTP || port_source == PORT_HTTP || port_source == PORT_HTTPS || port_source == PORT_HTTPS ) 
+    if (port_source == PORT_HTTP || port_destination == PORT_HTTP || port_source == PORT_HTTPS || port_destination == PORT_HTTPS || port_source == PORT_HTTP_ALT || port_destination == PORT_HTTP_ALT) 
     {
         if (taille > 0) 
              traiter_http(paquet, taille, verbosite);
             
+    }
+
+    // SMTP
+    if(port_source == PORT_SMTP || port_destination == PORT_SMTP || port_source == PORT_SMTP_ALT || port_destination == PORT_SMTP_ALT || port_source == PORT_SMTPS || port_destination == PORT_SMTPS)
+    {
+        if(taille > 0)
+            traiter_smtp(paquet, taille, verbosite);
     }
 }

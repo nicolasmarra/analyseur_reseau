@@ -13,6 +13,7 @@
 #include "pop3.h"
 #include "imap.h"
 #include "http.h"
+#include "smtp.h"
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <netinet/in.h>
@@ -33,7 +34,11 @@
 #define PORT_POP 110
 #define PORT_IMAP 143
 #define PORT_HTTP 80
+#define PORT_HTTP_ALT 8080
 #define PORT_HTTPS 443 
+#define PORT_SMTP 25
+#define PORT_SMTP_ALT 587
+#define PORT_SMTPS 465
 
 noreturn void raler(int syserr, const char *msg, ...);
 
