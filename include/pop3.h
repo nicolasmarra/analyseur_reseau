@@ -1,5 +1,5 @@
-#ifndef POP_H
-#define POP_H
+#ifndef POP3_H
+#define POP3_H
 
 #include "utiles.h"
 

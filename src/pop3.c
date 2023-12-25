@@ -1,4 +1,4 @@
-#include "pop.h"
+#include "pop3.h"
 
 void traiter_pop(const u_char *paquet, int taille, int verbosite) {
     printf("\n");

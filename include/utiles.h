@@ -10,7 +10,7 @@
 #include "arp.h"
 #include "ftp.h"
 #include "icmp.h"
-#include "pop.h"
+#include "pop3.h"
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <netinet/in.h>
