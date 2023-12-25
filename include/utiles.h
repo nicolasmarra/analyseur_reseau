@@ -11,6 +11,7 @@
 #include "ftp.h"
 #include "icmp.h"
 #include "pop3.h"
+#include "imap.h"
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <netinet/in.h>
@@ -29,6 +30,7 @@
 #define PORT_FTP 21
 #define PORT_FTP_DATA 20
 #define PORT_POP 110
+#define PORT_IMAP 143
 
 noreturn void raler(int syserr, const char *msg, ...);
 

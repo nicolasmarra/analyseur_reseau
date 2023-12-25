@@ -85,4 +85,10 @@ void traiter_port_tcp(int port_source, int port_destination,
         if (taille > 0)
             traiter_pop(paquet, taille, verbosite);
     }
+
+    // IMAP
+    if (port_source == PORT_IMAP || port_destination == PORT_IMAP) {
+        if (taille > 0)
+            traiter_imap(paquet, taille, verbosite);
+    }
 }
