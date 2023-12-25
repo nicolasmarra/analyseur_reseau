@@ -4,7 +4,7 @@
 
 #include "utiles.h"
 
-int traiter_ftp(const u_char * paquet, int verbosite);
+int traiter_ftp(const u_char * paquet, int taille, int verbosite);
 
 int recuperer_port(char *requete);
 

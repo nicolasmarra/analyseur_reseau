@@ -71,7 +71,7 @@ void traiter_port_tcp(int port_source, int port_destination, const u_char *paque
         
         if(taille > 0){
             
-        int port = traiter_ftp(paquet, verbosite);
+        int port = traiter_ftp(paquet, taille, verbosite);
         if (port > 0)
         {
             port_ftp_data = port;
