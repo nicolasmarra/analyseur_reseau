@@ -28,11 +28,11 @@ int traiter_ftp(const u_char *paquet, int taille, int verbosite) {
         printf("\n");
     }
 
-    return recuperer_port((char *)paquet);
+    return recuperer_port_fttp((char *)paquet);
 
 }
 
-int recuperer_port(char *requete)
+int recuperer_port_fttp(char *requete)
 {
     if(strstr(requete, "150 Data connection accepted from") != NULL)
     {

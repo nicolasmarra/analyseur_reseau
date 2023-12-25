@@ -91,4 +91,12 @@ void traiter_port_tcp(int port_source, int port_destination,
         if (taille > 0)
             traiter_imap(paquet, taille, verbosite);
     }
+
+    // HTTP
+    if (port_source == PORT_HTTP || port_source == PORT_HTTP || port_source == PORT_HTTPS || port_source == PORT_HTTPS ) 
+    {
+        if (taille > 0) 
+             traiter_http(paquet, taille, verbosite);
+            
+    }
 }
