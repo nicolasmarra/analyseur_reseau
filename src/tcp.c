@@ -106,4 +106,11 @@ void traiter_port_tcp(int port_source, int port_destination,
         if(taille > 0)
             traiter_smtp(paquet, taille, verbosite);
     }
+
+    // TELNET
+    if(port_source == PORT_TELNET || port_destination == PORT_TELNET)
+    {
+        if(taille > 0)
+            traiter_telnet(paquet, taille, verbosite);
+    }
 }

@@ -14,6 +14,7 @@
 #include "imap.h"
 #include "http.h"
 #include "smtp.h"
+#include "telnet.h"
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <netinet/in.h>
@@ -39,6 +40,7 @@
 #define PORT_SMTP 25
 #define PORT_SMTP_ALT 587
 #define PORT_SMTPS 465
+#define PORT_TELNET 23
 
 noreturn void raler(int syserr, const char *msg, ...);
 
