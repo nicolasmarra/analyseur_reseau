@@ -1,6 +1,7 @@
 #include "utiles.h"
 
 
+
 noreturn void raler(int syserr, const char *msg, ...) {
     va_list ap;
 

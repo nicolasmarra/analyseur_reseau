@@ -15,6 +15,7 @@
 #include "http.h"
 #include "smtp.h"
 #include "telnet.h"
+#include "bootp.h"
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <netinet/in.h>
