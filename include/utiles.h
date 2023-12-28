@@ -25,6 +25,7 @@
 #include <stdnoreturn.h>
 #include <netinet/in.h>
 #include <string.h>
+#include "ctype.h"
 
 #define PROMISCUOUS 0
 #define CONFUS 1
