@@ -3,6 +3,9 @@
 
 
 #include "utiles.h"
+#include "bootp_reference.h"
+
+#define HTYPE_ETHERNET 1
 
 /*
     @brief: fonction qui traiter les paquets bootp

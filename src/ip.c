@@ -96,13 +96,13 @@ void traiter_protocoles(const u_char *paquet, int taille, int verbosite, int pro
     switch (protocole)
     {
     case IPPROTO_UDP:
-        traiter_udp(paquet, verbosite);
+        traiter_udp(paquet, taille, verbosite);
         break;
     case IPPROTO_TCP:
         traiter_tcp(paquet, taille, verbosite);
         break;
     case IPPROTO_ICMP:
-        traiter_icmp(paquet, verbosite);
+        traiter_icmp(paquet, taille, verbosite);
         break;
     case IPPROTO_IPIP:
         if (version == VERSION_IPV4)

@@ -7,9 +7,10 @@
 /*
     @brief Fonction qui permet de traiter les paquets ICMP
     @param paquet : le paquet à traiter
+    @param taille : la taille du paquet
     @param verbosite : le niveau de verbosité
 */
-void traiter_icmp(const u_char *paquet, int verbosite);
+void traiter_icmp(const u_char *paquet, int taille, int verbosite);
 
 
 /*

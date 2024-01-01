@@ -1,7 +1,10 @@
 #include "icmp.h"
 
-void traiter_icmp(const u_char *paquet, int verbosite) {
+void traiter_icmp(const u_char *paquet, int taille, int verbosite) {
     
+    if(taille > 0)
+    {
+        
     struct icmphdr *icmp_header;
     icmp_header = (struct icmphdr *)(paquet);
 
@@ -19,6 +22,8 @@ void traiter_icmp(const u_char *paquet, int verbosite) {
         printf("Somme de contrôle : 0x%.2x\n", ntohs(icmp_header->checksum));
         printf("Identifiant : %d (0x%.2x)\n", ntohs(icmp_header->un.echo.id), ntohs(icmp_header->un.echo.id));
         printf("Numéro de séquence : %d (0x%.2x)\n", ntohs(icmp_header->un.echo.sequence), ntohs(icmp_header->un.echo.sequence));
+    }
+
     }
 }
 
