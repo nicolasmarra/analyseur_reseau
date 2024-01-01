@@ -5,8 +5,9 @@
 #include "utiles.h"
 #include "bootp_reference.h"
 
-#define HTYPE_ETHERNET 1
 
+#define HTYPE_ETHERNET 1
+#define DHCP 0x63825363
 /*
     @brief: fonction qui traiter les paquets bootp
     @param: paquet, le paquet a traiter

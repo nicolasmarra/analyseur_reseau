@@ -3,19 +3,15 @@
 void traiter_bootp(const u_char *paquet, int taille, int verbosite) {
 
     printf("\n");
-
+    printf("BOOTP\n");
     (void)taille;
 
     struct bootp *bootp_header = (struct bootp *)paquet;
-    if (bootp_header->bp_vend[0] == 0x63 && bootp_header->bp_vend[1] == 0x82 &&
-        bootp_header->bp_vend[2] == 0x53 && bootp_header->bp_vend[3] == 0x63)
-        printf("DHCP\n");
-    else
-        printf("BOOTP\n");
 
     if (verbosite > 1) {
 
         printf("Type de message: ");
+
         switch (bootp_header->bp_op) {
         case BOOTREQUEST:
             printf("Boot Request (%d)\n", bootp_header->bp_op);
@@ -24,7 +20,7 @@ void traiter_bootp(const u_char *paquet, int taille, int verbosite) {
             printf("Boot Reply (%d)\n", bootp_header->bp_op);
             break;
         default:
-            printf("Inconnu (%d)\n", bootp_header->bp_op);
+            printf("(%d)\n", bootp_header->bp_op);
             break;
         }
     }
@@ -69,17 +65,26 @@ void traiter_bootp(const u_char *paquet, int taille, int verbosite) {
                bootp_header->bp_chaddr[2], bootp_header->bp_chaddr[3],
                bootp_header->bp_chaddr[4], bootp_header->bp_chaddr[5]);
 
-        if (bootp_header->bp_sname[0] != '\0')
+        if (bootp_header->bp_sname[0])
             printf("Nom du serveur: %s\n", bootp_header->bp_sname);
         else
             printf("Nom du serveur: Non renseigné\n");
 
-        if (bootp_header->bp_file[0] != '\0')
+        if (bootp_header->bp_file[0])
             printf("Nom du fichier: %s\n", bootp_header->bp_file);
         else
             printf("Nom du fichier: Non renseigné\n");
 
-        printf("Options: \n");
+        if (bootp_header->bp_vend[0] == 99 &&
+            bootp_header->bp_vend[1] == 130 &&
+            bootp_header->bp_vend[2] == 83 &&
+            bootp_header->bp_vend[3] == 99)
+            printf("Magic Cookie : DHCP\n");
+        else
+            printf("Magic cookie: %.2x%.2x%.2x%.2x\n", bootp_header->bp_vend[0],
+                   bootp_header->bp_vend[1], bootp_header->bp_vend[2],
+                   bootp_header->bp_vend[3]);
+
         // afficher_options_bootp(bootp_header->bp_vend, verbosite);
     }
 }
