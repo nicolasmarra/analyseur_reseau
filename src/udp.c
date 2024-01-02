@@ -31,4 +31,9 @@ void traiter_port_udp(int port_source, int port_destination,
             traiter_bootp(paquet, taille, verbosite);
     }
 
+    if(port_source == PORT_DNS || port_destination == PORT_DNS){
+        if(taille > 0)
+            traiter_dns(paquet, taille, verbosite);
+    }
+
 }

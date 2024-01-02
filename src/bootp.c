@@ -108,14 +108,27 @@ void afficher_options_bootp(uint8_t *vendor_specific) {
                    options[i + 4], options[i + 5]);
             i += options[i + 1] + 2;
             break;
+        case TAG_TIME_OFFSET:
+            temps = options[i + 2] * 256 * 256 * 256 +
+                    options[i + 3] * 256 * 256 + options[i + 4] * 256 +
+                    options[i + 5];
+            afficher_temps("Time offset", temps);
+            i += options[i + 1] + 2;
+            break;
         case TAG_GATEWAY:
-            printf("Gateway: %d.%d.%d.%d\n", options[i + 2], options[i + 3],
+            printf("Router: %d.%d.%d.%d\n", options[i + 2], options[i + 3],
                    options[i + 4], options[i + 5]);
             i += options[i + 1] + 2;
             break;
         case TAG_TIME_SERVER:
             printf("Time server: %d.%d.%d.%d\n", options[i + 2], options[i + 3],
                    options[i + 4], options[i + 5]);
+            i += options[i + 1] + 2;
+            break;
+        case TAG_NAME_SERVER:
+            printf("Name server: %d.%d.%d.%d\n", options[i + 2], options[i + 3],
+                   options[i + 4], options[i + 5]);
+            i += options[i + 1] + 2;
             break;
         case TAG_DOMAIN_SERVER:
             int taille = 0;
@@ -134,15 +147,31 @@ void afficher_options_bootp(uint8_t *vendor_specific) {
             }
             printf("\n");
             i += options[i + 1] + 2;
-
             break;
         case TAG_LOG_SERVER:
             printf("Log server: %d.%d.%d.%d\n", options[i + 2], options[i + 3],
                    options[i + 4], options[i + 5]);
+            i += options[i + 1] + 2;
             break;
         case TAG_COOKIE_SERVER:
             printf("Cookie server: %d.%d.%d.%d\n", options[i + 2],
                    options[i + 3], options[i + 4], options[i + 5]);
+            i += options[i + 1] + 2;
+            break;
+        case TAG_LPR_SERVER:
+            printf("LPR server: %d.%d.%d.%d\n", options[i + 2], options[i + 3],
+                   options[i + 4], options[i + 5]);
+            i += options[i + 1] + 2;
+            break;
+        case TAG_IMPRESS_SERVER:
+            printf("Impress server: %d.%d.%d.%d\n", options[i + 2],
+                   options[i + 3], options[i + 4], options[i + 5]);
+            i += options[i + 1] + 2;
+            break;
+        case TAG_RLP_SERVER:
+            printf("RLP server: %d.%d.%d.%d\n", options[i + 2], options[i + 3],
+                   options[i + 4], options[i + 5]);
+            i += options[i + 1] + 2;
             break;
         case TAG_HOSTNAME:
             printf("Hostname: ");
@@ -150,10 +179,66 @@ void afficher_options_bootp(uint8_t *vendor_specific) {
             i += options[i + 1] + 2;
             break;
         case TAG_BOOTSIZE:
-            printf("Bootsize: %d\n", options[i + 2]);
+            printf("Bootsize: %d\n", options[i + 2] * 256 + options[i + 3]);
+            i += options[i + 1] + 2;
+            break;
+        case TAG_DUMPPATH:
+            printf("Dump path: ");
+            afficher_info(options + i + 2, options[i + 1], 1);
+            i += options[i + 1] + 2;
             break;
         case TAG_DOMAINNAME:
             printf("Domain name: ");
+            afficher_info(options + i + 2, options[i + 1], 1);
+            i += options[i + 1] + 2;
+            break;
+        case TAG_SWAP_SERVER:
+            printf("Swap server : ");
+            afficher_info(options + i + 2, options[i + 1], 1);
+            i += options[i + 1] + 2;
+            break;
+        case TAG_ROOTPATH:
+            printf("Root path: ");
+            afficher_info(options + i + 2, options[i + 1], 1);
+            i += options[i + 1] + 2;
+            break;
+        case TAG_EXTPATH:
+            printf("Extensions path: ");
+            afficher_info(options + i + 2, options[i + 1], 1);
+            i += options[i + 1] + 2;
+            break;
+        case TAG_IP_FORWARD:
+            printf("IP Forwarding: ");
+            switch (options[i + 2]) {
+            case 0:
+                printf("Off (%d)\n", options[i + 2]);
+                break;
+            case 1:
+                printf("On (%d)\n", options[i + 2]);
+                break;
+            default:
+                printf("(%d)\n", options[i + 2]);
+                break;
+            }
+            i += options[i + 1] + 2;
+            break;
+        case TAG_NL_SRCRT:
+            printf("Non-Local Source Routing: ");
+            switch (options[i + 2]) {
+            case 0:
+                printf("Off (%d)\n", options[i + 2]);
+                break;
+            case 1:
+                printf("On (%d)\n", options[i + 2]);
+                break;
+            default:
+                printf("(%d)\n", options[i + 2]);
+                break;
+            }
+            i += options[i + 1] + 2;
+            break;
+        case TAG_PFILTERS:
+            printf("Policy Filter: ");
             afficher_info(options + i + 2, options[i + 1], 1);
             i += options[i + 1] + 2;
             break;
@@ -399,7 +484,7 @@ void afficher_options_bootp(uint8_t *vendor_specific) {
             break;
         
         default :
-            printf("Option non reconnue : Taille : %d\n", options[i + 1]);
+            printf("Option non reconnue (%d) -  Taille : %d\n",options[i], options[i + 1]);
             i += options[i + 1] + 2;
             break;
         }
