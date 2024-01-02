@@ -118,8 +118,13 @@ void afficher_options_bootp(uint8_t *vendor_specific) {
                    options[i + 4], options[i + 5]);
             break;
         case TAG_DOMAIN_SERVER:
-            printf("Domain name server: %d.%d.%d.%d\n", options[i + 2],
-                   options[i + 3], options[i + 4], options[i + 5]);
+            int taille = 0;
+            while(taille != options[i + 1]) {
+                printf("Domain name server: %d.%d.%d.%d\n", options[i + 2 + taille],
+                   options[i + 3 + taille], options[i + 4 + taille], options[i + 5 + taille]);
+                taille += 4;
+            }
+            printf("\n");
             i += options[i + 1] + 2;
 
             break;
