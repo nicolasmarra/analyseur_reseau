@@ -397,6 +397,11 @@ void afficher_options_bootp(uint8_t *vendor_specific) {
             }
             i += options[i + 1] + 2;
             break;
+        
+        default :
+            printf("Option non reconnue : Taille : %d\n", options[i + 1]);
+            i += options[i + 1] + 2;
+            break;
         }
     }
 
