@@ -5,6 +5,15 @@
         "ip.h": "c",
         "utiles.h": "c",
         "tcp.h": "c",
-        "internet": "c"
+        "internet": "c",
+        "array": "c",
+        "chrono": "c",
+        "compare": "c",
+        "executor": "c",
+        "functional": "c",
+        "ratio": "c",
+        "tuple": "c",
+        "type_traits": "c",
+        "utility": "c"
     }
 }

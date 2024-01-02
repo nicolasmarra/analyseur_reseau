@@ -44,4 +44,12 @@ void afficher_liste_parametres(int item);
 */
 void afficher_info(uint8_t *info, uint8_t taille, int type);
 
+/*
+    @brief: fonction qui affiche un message dhcp
+    @param: type_message, le type de message à afficher
+
+*/
+void afficher_message_dhcp(int type_message);
+
+
 #endif

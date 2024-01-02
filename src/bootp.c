@@ -144,6 +144,11 @@ void afficher_options_bootp(uint8_t *vendor_specific) {
         case TAG_BOOTSIZE:
             printf("Bootsize: %d\n", options[i + 2]);
             break;
+        case TAG_REQUESTED_IP:
+            printf("Requested IP address: %d.%d.%d.%d\n", options[i + 2],
+                   options[i + 3], options[i + 4], options[i + 5]);
+            i += options[i + 1] + 2;
+            break;
         case TAG_IP_LEASE:
             temps = options[i + 2] * 256 * 256 * 256 +
                     options[i + 3] * 256 * 256 + options[i + 4] * 256 +
@@ -153,35 +158,7 @@ void afficher_options_bootp(uint8_t *vendor_specific) {
             break;
         case TAG_DHCP_MESSAGE:
             printf("DHCP message type: ");
-            switch (options[i + 2]) {
-            case DHCPDISCOVER:
-                printf("DHCP Discover (%d)\n", options[i + 2]);
-                break;
-            case DHCPOFFER:
-                printf("DHCP Offer (%d)\n", options[i + 2]);
-                break;
-            case DHCPREQUEST:
-                printf("DHCP Request (%d)\n", options[i + 2]);
-                break;
-            case DHCPDECLINE:
-                printf("DHCP Decline (%d)\n", options[i + 2]);
-                break;
-            case DHCPACK:
-                printf("DHCP Ack (%d)\n", options[i + 2]);
-                break;
-            case DHCPNAK:
-                printf("DHCP Nak (%d)\n", options[i + 2]);
-                break;
-            case DHCPRELEASE:
-                printf("DHCP Release (%d)\n", options[i + 2]);
-                break;
-            case DHCPINFORM:
-                printf("DHCP Inform (%d)\n", options[i + 2]);
-                break;
-            default:
-                printf("(%d)\n", options[i + 2]);
-                break;
-            }
+            afficher_message_dhcp(options[i + 2]);
             i += options[i + 1] + 2;
             break;
         case TAG_SERVER_ID:
@@ -457,4 +434,37 @@ void afficher_info(uint8_t *info, uint8_t taille, int type)
     }
 
     printf("\n");
+}
+
+void afficher_message_dhcp(int type_message)
+{
+     switch (type_message) {
+            case DHCPDISCOVER:
+                printf("DHCP Discover (%d)\n", type_message);
+                break;
+            case DHCPOFFER:
+                printf("DHCP Offer (%d)\n", type_message);
+                break;
+            case DHCPREQUEST:
+                printf("DHCP Request (%d)\n", type_message);
+                break;
+            case DHCPDECLINE:
+                printf("DHCP Decline (%d)\n", type_message);
+                break;
+            case DHCPACK:
+                printf("DHCP Ack (%d)\n", type_message);
+                break;
+            case DHCPNAK:
+                printf("DHCP Nak (%d)\n", type_message);
+                break;
+            case DHCPRELEASE:
+                printf("DHCP Release (%d)\n", type_message);
+                break;
+            case DHCPINFORM:
+                printf("DHCP Inform (%d)\n", type_message);
+                break;
+            default:
+                printf("(%d)\n", type_message);
+                break;
+            }
 }
