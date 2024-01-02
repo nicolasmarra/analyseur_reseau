@@ -37,8 +37,7 @@
 #define PORT_POP 110
 #define PORT_IMAP 143
 #define PORT_HTTP 80
-#define PORT_HTTP_ALT 8080
-#define PORT_HTTPS 443 
+#define PORT_HTTP_ALT 8080 
 #define PORT_SMTP 25
 #define PORT_SMTP_ALT 587
 #define PORT_SMTPS 465

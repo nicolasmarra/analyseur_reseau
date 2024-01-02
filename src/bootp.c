@@ -41,8 +41,8 @@ void traiter_bootp(const u_char *paquet, int taille, int verbosite) {
 
         printf("Nombre de sauts (Hops): %d\n", bootp_header->bp_hops);
 
-        printf("Identifiant de transaction: 0x%.2x (%d)\n",
-               ntohl(bootp_header->bp_xid), ntohl(bootp_header->bp_xid));
+        printf("Identifiant de transaction: 0x%.2x \n",
+               ntohl(bootp_header->bp_xid));
 
         printf("Secondes écoulées : %d\n", ntohs(bootp_header->bp_secs));
 
@@ -119,9 +119,17 @@ void afficher_options_bootp(uint8_t *vendor_specific) {
             break;
         case TAG_DOMAIN_SERVER:
             int taille = 0;
-            while(taille != options[i + 1]) {
-                printf("Domain name server: %d.%d.%d.%d\n", options[i + 2 + taille],
-                   options[i + 3 + taille], options[i + 4 + taille], options[i + 5 + taille]);
+            while (taille != options[i + 1]) {
+
+                if(options[i + 1] - taille >= 4 || options[i + 1] - taille % 4 ==  0)
+                {   
+                printf("Domain name server: %d.%d.%d.%d\n",
+                       options[i + 2 + taille], options[i + 3 + taille],
+                       options[i + 4 + taille], options[i + 5 + taille]);
+                }else{
+                printf("Error/Protocol : option length is not a multiple of 4\n");
+                break;
+                }
                 taille += 4;
             }
             printf("\n");
@@ -144,6 +152,11 @@ void afficher_options_bootp(uint8_t *vendor_specific) {
         case TAG_BOOTSIZE:
             printf("Bootsize: %d\n", options[i + 2]);
             break;
+        case TAG_DOMAINNAME:
+            printf("Domain name: ");
+            afficher_info(options + i + 2, options[i + 1], 1);
+            i += options[i + 1] + 2;
+            break;
         case TAG_REQUESTED_IP:
             printf("Requested IP address: %d.%d.%d.%d\n", options[i + 2],
                    options[i + 3], options[i + 4], options[i + 5]);
@@ -154,6 +167,24 @@ void afficher_options_bootp(uint8_t *vendor_specific) {
                     options[i + 3] * 256 * 256 + options[i + 4] * 256 +
                     options[i + 5];
             afficher_temps("IP lease time", temps);
+            i += options[i + 1] + 2;
+            break;
+        case TAG_OPT_OVERLOAD:
+            printf("Option overload: ");
+            switch (options[i + 2]) {
+            case 1:
+                printf("Boot File (%d)\n", options[i + 2]);
+                break;
+            case 2:
+                printf("Server host names (%d)\n", options[i + 2]);
+                break;
+            case 3:
+                printf("Boot file and server host names (%d)\n", options[i + 2]);
+                break;
+            default:
+                printf("(%d)\n", options[i + 2]);
+                break;
+            }
             i += options[i + 1] + 2;
             break;
         case TAG_DHCP_MESSAGE:
@@ -176,6 +207,7 @@ void afficher_options_bootp(uint8_t *vendor_specific) {
                 afficher_liste_parametres(options[i + 2 + item]);
                 item++;
             }
+            printf("\n");
             i += options[i + 1] + 2;
             break;
         case TAG_MAX_MSG_SIZE:
@@ -199,9 +231,34 @@ void afficher_options_bootp(uint8_t *vendor_specific) {
             afficher_temps("Rebinding time", temps);
             i += options[i + 1] + 2;
             break;
+        case TAG_VENDOR_CLASS:
+            printf("Vendor class identifier: ");
+            afficher_info(options + i + 2, options[i + 1], 1);
+            i += options[i + 1] + 2;
+            break;
         case TAG_CLIENT_ID:
             printf("Client identifier: ");
-            afficher_info(options + i + 2, options[i + 1], 1);
+            // on vérifie si ce champ contient une option supplémentaire pour le
+            // type de matériel du client
+
+            if (options[i + 1] == 7) {
+                printf("\n");
+                if (options[i + 2] == 1)
+                    printf("Type de matériel : Ethernet (%d)\n",
+                           options[i + 2]);
+                else
+                    printf("Type de matériel : (%d)\n", options[i + 2]);
+
+            
+                printf("Adresse MAC client: %.2x:%.2x:%.2x:%.2x:%.2x:%.2x\n",
+               options[i+3], options[i+4],
+               options[i+5], options[i+6],
+               options[i+7], options[i+8]);
+
+            } else {
+                afficher_info(options + i + 2, options[i + 1], 1);
+            }
+
             i += options[i + 1] + 2;
             break;
         case TAG_TFTP_SERVER:
@@ -219,7 +276,7 @@ void afficher_options_bootp(uint8_t *vendor_specific) {
             case 2:
                 printf("Remote ID (%d) : ", options[i + 2]);
                 afficher_info(options + i + 4, options[i + 3], 2);
-                
+
                 break;
             default:
                 printf("(%d)\n", options[i + 2]);
@@ -285,12 +342,20 @@ void afficher_options_bootp(uint8_t *vendor_specific) {
             printf("Secret ID: 0x");
             // ce champ fait 4 octets et est affiché en hexa
             afficher_info(options + i + 13, 4, 2);
-            
+
             printf("HMAC MD5 Hash: ");
             // ce champ fait 16 octets et est affiché en hexa
             afficher_info(options + i + 17, 16, 2);
             printf("\n");
 
+            i += options[i + 1] + 2;
+            break;
+        case TAG_CLIENT_LAST_TRANSACTION_TIME:
+            temps = options[i + 2] * 256 * 256 * 256 +
+                    options[i + 3] * 256 * 256 + options[i + 4] * 256 +
+                    options[i + 5];
+
+            afficher_temps("Client Last Transaction Time", temps);
             i += options[i + 1] + 2;
             break;
         case TAG_SIP_SERVERS:
@@ -314,6 +379,24 @@ void afficher_options_bootp(uint8_t *vendor_specific) {
             printf("\n");
             i += options[i + 1] + 2;
             break;
+        
+        case TAG_TFTP_SERVER_ADDRESS:
+            int taille1 = 0;
+            while(taille1 != options[i+1]){
+                if(options[i + 1] - taille1 >= 4 || options[i + 1] - taille1 % 4 ==  0)
+                {
+                        
+                printf("TFTP server address: %d.%d.%d.%d\n", options[i + 2 + taille1],
+                   options[i + 3 + taille1], options[i + 4 + taille1], options[i + 5 + taille1]);
+                   taille1 += 4;
+                }else{
+                  printf("Error/Protocol : option length is not a multiple of 4\n");
+                break;  
+                }
+                
+            }
+            i += options[i + 1] + 2;
+            break;
         }
     }
 
@@ -322,11 +405,11 @@ void afficher_options_bootp(uint8_t *vendor_specific) {
 
 void afficher_temps(char *description, int temps) {
     if (temps >= 3600)
-        printf("%s: (%ds) %d hour(s)\n", description, temps, temps / 3600);
+        printf("%s: (%ds) %d hour(s)...\n", description, temps, temps / 3600);
     else if (temps >= 60)
-        printf("%s: (%ds) %d minute(s)\n", description, temps, temps / 60);
+        printf("%s: (%ds) %d minute(s)...\n", description, temps, temps / 60);
     else
-        printf("%s: (%ds) %d second(s)\n", description, temps, temps);
+        printf("%s: (%ds) %d second(s)...\n", description, temps, temps);
 }
 
 void afficher_liste_parametres(int item) {
@@ -360,6 +443,9 @@ void afficher_liste_parametres(int item) {
         break;
     case TAG_STATIC_ROUTE:
         printf("Static route\n");
+        break;
+    case TAG_ARP_TIMEOUT:
+        printf("ARP cache timeout\n");
         break;
     case TAG_NETBIOS_NS:
         printf("NetBIOS name server\n");
@@ -422,8 +508,7 @@ void afficher_liste_parametres(int item) {
     }
 }
 
-void afficher_info(uint8_t *info, uint8_t taille, int type)
-{
+void afficher_info(uint8_t *info, uint8_t taille, int type) {
     int i = 0;
     while (i != taille) {
         if (type == 1)
@@ -436,35 +521,37 @@ void afficher_info(uint8_t *info, uint8_t taille, int type)
     printf("\n");
 }
 
-void afficher_message_dhcp(int type_message)
-{
-     switch (type_message) {
-            case DHCPDISCOVER:
-                printf("DHCP Discover (%d)\n", type_message);
-                break;
-            case DHCPOFFER:
-                printf("DHCP Offer (%d)\n", type_message);
-                break;
-            case DHCPREQUEST:
-                printf("DHCP Request (%d)\n", type_message);
-                break;
-            case DHCPDECLINE:
-                printf("DHCP Decline (%d)\n", type_message);
-                break;
-            case DHCPACK:
-                printf("DHCP Ack (%d)\n", type_message);
-                break;
-            case DHCPNAK:
-                printf("DHCP Nak (%d)\n", type_message);
-                break;
-            case DHCPRELEASE:
-                printf("DHCP Release (%d)\n", type_message);
-                break;
-            case DHCPINFORM:
-                printf("DHCP Inform (%d)\n", type_message);
-                break;
-            default:
-                printf("(%d)\n", type_message);
-                break;
-            }
+void afficher_message_dhcp(int type_message) {
+    switch (type_message) {
+    case DHCPDISCOVER:
+        printf("DHCP Discover (%d)\n", type_message);
+        break;
+    case DHCPOFFER:
+        printf("DHCP Offer (%d)\n", type_message);
+        break;
+    case DHCPREQUEST:
+        printf("DHCP Request (%d)\n", type_message);
+        break;
+    case DHCPDECLINE:
+        printf("DHCP Decline (%d)\n", type_message);
+        break;
+    case DHCPACK:
+        printf("DHCP ACK (%d)\n", type_message);
+        break;
+    case DHCPNAK:
+        printf("DHCP NACK (%d)\n", type_message);
+        break;
+    case DHCPRELEASE:
+        printf("DHCP Release (%d)\n", type_message);
+        break;
+    case DHCPINFORM:
+        printf("DHCP Inform (%d)\n", type_message);
+        break;
+    case DHCPLEASEQUERY:
+        printf("DHCP Lease Query (%d)\n", type_message);
+        break;
+    default:
+        printf("(%d)\n", type_message);
+        break;
+    }
 }

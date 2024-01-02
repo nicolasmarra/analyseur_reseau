@@ -7,6 +7,10 @@
 
 #define TAG_SIP_SERVERS 120
 #define TAG_TFTP_SERVER_ADDRESS 150
+#define TAG_CLIENT_LAST_TRANSACTION_TIME 91
+
+#define DHCPLEASEQUERY 10
+
 
 /*
     @brief: fonction qui traiter les paquets bootp

@@ -93,7 +93,7 @@ void traiter_port_tcp(int port_source, int port_destination,
     }
 
     // HTTP
-    if (port_source == PORT_HTTP || port_destination == PORT_HTTP || port_source == PORT_HTTPS || port_destination == PORT_HTTPS || port_source == PORT_HTTP_ALT || port_destination == PORT_HTTP_ALT) 
+    if (port_source == PORT_HTTP || port_destination == PORT_HTTP || port_source == PORT_HTTP_ALT || port_destination == PORT_HTTP_ALT) 
     {
         if (taille > 0) 
              traiter_http(paquet, taille, verbosite);
