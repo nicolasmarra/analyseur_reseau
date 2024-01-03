@@ -17,6 +17,6 @@ void traiter_icmp(const u_char *paquet, int taille, int verbosite);
     @brief Fonction qui permet d'afficher le type
     @param type : le type
 */
-void afficher_type(int type);
+void afficher_type_icmp(int type);
 
 #endif

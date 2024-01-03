@@ -17,7 +17,7 @@ void traiter_icmp(const u_char *paquet, int taille, int verbosite) {
     }
 
     if (verbosite > 2) {
-        afficher_type(icmp_header->type);
+        afficher_type_icmp(icmp_header->type);
         printf("Code : %d\n", icmp_header->code);
         printf("Somme de contrôle : 0x%.2x\n", ntohs(icmp_header->checksum));
         printf("Identifiant : %d (0x%.2x)\n", ntohs(icmp_header->un.echo.id), ntohs(icmp_header->un.echo.id));
@@ -27,7 +27,7 @@ void traiter_icmp(const u_char *paquet, int taille, int verbosite) {
     }
 }
 
-void afficher_type(int type)
+void afficher_type_icmp(int type)
 {
     printf("Type : ");
     switch (type)
