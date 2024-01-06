@@ -33,8 +33,12 @@ void traiter_dns(const u_char *paquet, int taille, int verbosite) {
         int position =
             afficher_questions_dns(requetes, ntohs(dns_header->questions), 0);
 
+
+
         // Affichage des réponses DNS
         position += sizeof(struct dnshdr);
+        // en raison de la compression de nom, qui est utilisée pour réduire la taille des paquets DNS, dans les réponses, les serveurs de noms et les informations supplémentaires
+        //il faut donc passer le paquet complet aux fonctions suivantes
         position = afficher_info_dns(paquet, ntohs(dns_header->answers),
                                      position, ANSWER);
 
@@ -52,7 +56,7 @@ int afficher_questions_dns(const u_char *requetes, int nb_questions,
                            int position) {
     if (nb_questions > 0) {
 
-        printf("Questions DNS : \n");
+        printf("Requêtes DNS : \n");
         for (int i = 0; i < nb_questions; i++) {
 
             printf("- ");
@@ -183,12 +187,12 @@ int afficher_info_dns(const u_char *requetes, int nb_info, int position,
                 printf("\n");
                 break;
             case 2:
-                printf("NS : ");
+                printf("Name Server : ");
                 afficher_nom_dns(requetes, nouvelle_position);
                 printf("\n");
                 break;
             case 5:
-                printf(", CNAME : ");
+                printf("CNAME : ");
                 afficher_nom_dns(requetes, nouvelle_position);
                 printf("\n");
                 break;
@@ -237,16 +241,15 @@ int afficher_info_dns(const u_char *requetes, int nb_info, int position,
 
                 break;
             case 12:
-                printf("PTR : ");
+                printf("Domain Name : ");
                 afficher_nom_dns(requetes, nouvelle_position);
                 printf("\n");
                 break;
             case 15:
-                printf("MX : ");
-                printf("%d",
+                printf("Preference: %d\n",
                        ntohs(*(uint16_t *)(requetes + nouvelle_position)));
                 nouvelle_position += 2;
-                printf(", ");
+                printf("MAIL EXCHANGE: ");
                 afficher_nom_dns(requetes, nouvelle_position);
                 printf("\n");
                 break;
@@ -256,7 +259,7 @@ int afficher_info_dns(const u_char *requetes, int nb_info, int position,
                 printf("\n");
                 break;
             case 28:
-                printf("AAAA : ");
+                printf("AAAA Address: ");
                 for (int i = 0; i < ntohs(longueur); i++) {
                     printf("%x", requetes[nouvelle_position + i]);
                     if (i < ntohs(longueur) - 1) {
