@@ -3,6 +3,10 @@
 
 #include "utiles.h"
 
+#define ANSWER 1
+#define NAME_SERVER 2
+#define ADITIONNAL_INFO 3
+
 struct dnshdr {
     uint16_t id;
     uint16_t flags;
@@ -20,14 +24,51 @@ struct dnshdr {
 */
 void traiter_dns(const u_char *paquet, int taille, int verbosite);
 
-
-
 /*
     @brief Fonction qui permet d'afficher les requêtes DNS
     @param requetes : les requêtes DNS
-    @param questions : le nombre de questions
+    @param nb_question : le nombre de questions
+    @param position : la position actuelle du paquet
+    @return : renvoie la nouvelle position du paquet
 */
-void afficher_requetes(const u_char *requetes, int questions);
+int afficher_questions_dns(const u_char * requetes, int nb_questions, int position);
+
+
+/*
+    @brief Fonction qui permet d'afficher le nom DNS
+    @param nom : le nom DNS
+    @param position : la position actuelle du paquet
+    @return : renvoie la nouvelle position du paquet
+*/
+int afficher_nom_dns(const u_char *nom, int position);
+
+
+/*
+    @brief Fonction qui permet d'afficher les informations (answer, name server, additional info) DNS
+    @param requetes : les requêtes DNS
+    @param nb_reponses : le nombre d'informations
+    @param position : la position actuelle du paquet
+    @param type : le type de l'information (answer, name server, additional info)
+    @return : renvoie la nouvelle position du paquet
+*/
+int afficher_info_dns(const u_char *requetes, int nb_info, int position, int type);
+
+
+/*
+    @brief Fonction qui permet d'afficher le type de la réponse DNS
+    @param type : le type de la réponse
+*/
+void afficher_type_reponse(int type);
+
+
+/*
+    @brief Fonction qui permet d'afficher les informations supplémentaires DNS
+    @param requetes : les requêtes DNS
+    @param nb_reponses : le nombre de réponses
+    @param position : la position actuelle du paquet
+    @return : renvoie la nouvelle position du paquet
+*/
+void afficher_nombre_type_reponse(int type, int n);
 
 
 /*
@@ -35,6 +76,7 @@ void afficher_requetes(const u_char *requetes, int questions);
     @param type : le type de la requête
 */
 void afficher_type_dns(int type);
+
 
 /*
     @brief Fonction qui permet d'afficher la classe de la requête DNS

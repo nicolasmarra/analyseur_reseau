@@ -1,0 +1,111 @@
+========================================
+Trame: 1
+
+ETHERNET
+Adresse MAC destination : 00:21:85:11:de:17
+Adresse MAC source : a0:a8:cd:ae:c3:bf
+Type: IPv4 (0x0800)
+Longueur : 88
+
+IPV4
+Version : 4
+Longueur de l'en-tête : 20 bytes (5)
+Type de service : 0
+Longueur totale : 74
+Identification : 0x5e4b (24139)
+Flags : 0x00
+TTL : 64
+Protocole : UDP (17)
+Somme de contrôle : 0xac82 (44162)
+Adresse IP source : 10.222.173.22
+Adresse IP destination : 10.222.173.3
+
+UDP
+Port source : 56542
+Port destination : 53
+Longueur : 54
+Somme de contrôle : 0x7c15 (31765)
+
+DNS
+Transaction ID : 0x03c4
+Flags : 0x0120
+Questions : 1
+Answer RRs : 0
+Authority RRs : 0
+Additional RRs : 1
+Queries: 
+ocsp.verisign.net Type AAAA, Class IN
+========================================
+Trame: 2
+
+ETHERNET
+Adresse MAC destination : 00:18:39:c5:98:d9
+Adresse MAC source : 00:21:85:11:de:17
+Type: IPv4 (0x0800)
+Longueur : 88
+
+IPV4
+Version : 4
+Longueur de l'en-tête : 20 bytes (5)
+Type de service : 0
+Longueur totale : 74
+Identification : 0x1806 (6150)
+Flags : 0x00
+TTL : 64
+Protocole : UDP (17)
+Somme de contrôle : 0xb2e6 (45798)
+Adresse IP source : 10.222.173.3
+Adresse IP destination : 199.7.48.206
+
+UDP
+Port source : 43252
+Port destination : 53
+Longueur : 54
+Somme de contrôle : 0x9b2 (2482)
+
+DNS
+Transaction ID : 0xeb3f
+Flags : 0x0010
+Questions : 1
+Answer RRs : 0
+Authority RRs : 0
+Additional RRs : 1
+Queries: 
+ocsp.verisign.net Type AAAA, Class IN
+========================================
+Trame: 3
+
+ETHERNET
+Adresse MAC destination : 00:21:85:11:de:17
+Adresse MAC source : 00:18:39:c5:98:d9
+Type: IPv4 (0x0800)
+Longueur : 88
+
+IPV4
+Version : 4
+Longueur de l'en-tête : 20 bytes (5)
+Type de service : 32
+Longueur totale : 74
+Identification : 0x787b (30843)
+Flags : 0x4000
+TTL : 246
+Protocole : UDP (17)
+Somme de contrôle : 0x5c50 (23632)
+Adresse IP source : 199.7.48.206
+Adresse IP destination : 10.222.173.3
+
+UDP
+Port source : 53
+Port destination : 43252
+Longueur : 54
+Somme de contrôle : 0x85b1 (34225)
+
+DNS
+Transaction ID : 0xeb3f
+Flags : 0x8410
+Questions : 1
+Answer RRs : 0
+Authority RRs : 0
+Additional RRs : 1
+Queries: 
+ocsp.verisign.net Type AAAA, Class IN
