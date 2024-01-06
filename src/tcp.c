@@ -26,6 +26,7 @@ void traiter_tcp(const u_char *paquet, int taille, int verbosite) {
     }
 
     // Traitement des options
+    
     traiter_options(tcp_header);
 
     // Traitement des ports
