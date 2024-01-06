@@ -113,4 +113,11 @@ void traiter_port_tcp(int port_source, int port_destination,
         if(taille > 0)
             traiter_telnet(paquet, taille, verbosite);
     }
+
+    // DNS
+    if(port_source == PORT_DNS || port_destination == PORT_DNS)
+    {
+        if(taille > 0)
+            traiter_dns(paquet+2, taille, verbosite);
+    }
 }

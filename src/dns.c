@@ -10,6 +10,11 @@ void traiter_dns(const u_char *paquet, int taille, int verbosite) {
     dns_header = (struct dnshdr *)(paquet);
 
     if (verbosite > 1) {
+         if ((ntohs(dns_header->flags) & 0x8000) == 0) 
+            printf("Type : Requête\n");
+         else 
+            printf("Type : Réponse\n");
+        
         printf("Transaction ID : 0x%.4x\n", ntohs(dns_header->id));
         printf("Flags : 0x%.4x\n", ntohs(dns_header->flags));
 
