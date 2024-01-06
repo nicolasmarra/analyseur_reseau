@@ -10,11 +10,11 @@ void traiter_ipv4(const u_char *paquet, int verbosite) {
         printf("Version : %d\n", ip_header->ip_v);
         printf("Longueur de l'en-tête : %d bytes (%d)\n", ip_header->ip_hl * 4,
                ip_header->ip_hl);
-        printf("Type de service : %d\n", ip_header->ip_tos);
+        printf("Type de service : 0x%.2x\n", ip_header->ip_tos);
         printf("Longueur totale : %d\n", ntohs(ip_header->ip_len));
         printf("Identification : 0x%.2x (%d)\n", ntohs(ip_header->ip_id),
                ntohs(ip_header->ip_id));
-        printf("Flags : 0x%.2x\n", ntohs(ip_header->ip_off));
+        printf("Flags : 0x%.2x\n", ip_header->ip_off);
         printf("TTL : %d\n", ip_header->ip_ttl);
         printf("Protocole : ");
         afficher_type_protocole_IP(ip_header->ip_p);
