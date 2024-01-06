@@ -34,7 +34,6 @@ void traiter_dns(const u_char *paquet, int taille, int verbosite) {
             afficher_questions_dns(requetes, ntohs(dns_header->questions), 0);
 
 
-
         // Affichage des réponses DNS
         position += sizeof(struct dnshdr);
         // en raison de la compression de nom, qui est utilisée pour réduire la taille des paquets DNS, dans les réponses, les serveurs de noms et les informations supplémentaires
