@@ -20,7 +20,7 @@ void traiter_paquet(u_char *args, const struct pcap_pkthdr *header,
         (ntohs(ethernet_header->ether_type) == ETHERTYPE_IP)     ? "IPv4"
         : (ntohs(ethernet_header->ether_type) == ETHERTYPE_IPV6) ? "IPv6"
                                                                  : "";
-    printf("========================================\n");
+    printf("============================================================\n");
     printf("Trame: %d\n", ++nbr_paquet);
     printf("\n");
     printf("ETHERNET\n");

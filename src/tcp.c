@@ -66,7 +66,9 @@ void traiter_options(struct tcphdr *tcp_header) {
 
         int taille_options = (tcp_header->doff - 5) * 4;
 
-        for (int i = 0; i < taille_options;) {
+        int i=0;
+        while(i<taille_options)
+        {
 
             switch (options[i]) {
             case TCPOPT_NOP:
@@ -97,7 +99,10 @@ void traiter_options(struct tcphdr *tcp_header) {
                 }
                 */
                 printf("\n");
-                i += options[i+1];
+                if(taille_options - i >= 2)
+                    i += options[i+1];
+                else 
+                    i++;
                 break;
             case TCPOPT_WINDOW:
                 printf("- Window Scale : ");
