@@ -12,11 +12,14 @@ void traiter_icmp(const u_char *paquet, int taille, int verbosite) {
     printf("\n");
     printf("ICMP\n");
 
-    if (verbosite > 1) {
-        
+    // Verbosité de niveau 2
+    if (verbosite == 2) {
+        // on affiche seulement le type de requête ou de réponse
+        afficher_type_icmp(icmp_header->type);
     }
 
-    if (verbosite > 2) {
+    // Verbosité de niveau 3
+    else if (verbosite == 3) {
         afficher_type_icmp(icmp_header->type);
         printf("Code : %d\n", icmp_header->code);
         printf("Somme de contrôle : 0x%.2x\n", ntohs(icmp_header->checksum));

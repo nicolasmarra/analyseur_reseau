@@ -4,11 +4,13 @@ void traiter_http(const u_char *paquet, int taille, int verbosite) {
     printf("\n");
     printf("HTTP\n");
 
+    // Verbosité de niveau 2
     if (verbosite == 2) 
     {
+        // on affiche seulement le type de requête ou de réponse
         afficher_requete_http((char *)paquet);
     }
-
+    // Verbosité de niveau 3
     else if (verbosite == 3) {
 
         afficher_informations_http(paquet, taille);
