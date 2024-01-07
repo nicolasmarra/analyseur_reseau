@@ -1,41 +1,36 @@
 #include "bootp.h"
 
-void traiter_bootp(const u_char *paquet, int taille, int verbosite) {
+void traiter_bootp(const u_char *paquet, int verbosite) {
 
     printf("\n");
     printf("BOOTP\n");
-    (void)taille;
 
     struct bootp *bootp_header = (struct bootp *)paquet;
 
-    if (verbosite > 1) {
+    // Verbosité de niveau 2
+    if (verbosite == 2) {
 
-        printf("Type de message: ");
-
-        switch (bootp_header->bp_op) {
-        case BOOTREQUEST:
-            printf("Boot Request (%d)\n", bootp_header->bp_op);
-            break;
-        case BOOTREPLY:
-            printf("Boot Reply (%d)\n", bootp_header->bp_op);
-            break;
-        default:
-            printf("(%d)\n", bootp_header->bp_op);
-            break;
-        }
-    }
-
-    if (verbosite > 2) {
+        afficher_type_message_bootp(bootp_header->bp_op);
+        printf(" - ");
 
         printf("Type de matériel: ");
-        switch (bootp_header->bp_htype) {
-        case 1:
+        if (bootp_header->bp_htype == 1)
             printf("Ethernet (%d)\n", bootp_header->bp_htype);
-            break;
-        default:
+        else
             printf("(%d)\n", bootp_header->bp_htype);
-            break;
-        }
+
+    }
+    // Verbosité de niveau 3
+    else if (verbosite == 3) {
+
+        afficher_type_message_bootp(bootp_header->bp_op);
+        printf("\n");
+
+        printf("Type de matériel: ");
+        if (bootp_header->bp_htype == 1)
+            printf("Ethernet (%d)\n", bootp_header->bp_htype);
+        else
+            printf("(%d)\n", bootp_header->bp_htype);
 
         printf("Longueur de l'adresse matérielle: %d\n", bootp_header->bp_hlen);
 
@@ -77,7 +72,10 @@ void traiter_bootp(const u_char *paquet, int taille, int verbosite) {
 
         if (bootp_header->bp_vend[0] == 99 && bootp_header->bp_vend[1] == 130 &&
             bootp_header->bp_vend[2] == 83 && bootp_header->bp_vend[3] == 99) {
+            
+            // Magic cookie correspond à DHCP, alors il y a des options DHCP
             printf("Magic Cookie : DHCP\n");
+            
             afficher_options_bootp(bootp_header->bp_vend);
         } else {
 
@@ -86,6 +84,21 @@ void traiter_bootp(const u_char *paquet, int taille, int verbosite) {
                    bootp_header->bp_vend[3]);
             printf("Options: non présentes!\n");
         }
+    }
+}
+
+void afficher_type_message_bootp(uint8_t type) {
+    printf("Type de message: ");
+    switch (type) {
+    case BOOTREQUEST:
+        printf("Boot Request (%d)", type);
+        break;
+    case BOOTREPLY:
+        printf("Boot Reply (%d)", type);
+        break;
+    default:
+        printf("(%d)", type);
+        break;
     }
 }
 
@@ -101,85 +114,93 @@ void afficher_options_bootp(uint8_t *vendor_specific) {
         switch (options[i]) {
 
         case TAG_PAD:
+            //La longueur de cette option est toujours 0
             printf("PAD\n");
+            i++;
             break;
         case TAG_SUBNET_MASK:
-            printf("Subnet mask: %d.%d.%d.%d\n", options[i + 2], options[i + 3],
+            //La longueur de cette option est toujours 4
+            if(options[i+1] == 4){
+                printf("Subnet mask: %d.%d.%d.%d\n", options[i + 2], options[i + 3],
                    options[i + 4], options[i + 5]);
+            }
+            else{
+                printf("Error/Protocol : option length is not 4\n");
+            }
             i += options[i + 1] + 2;
             break;
         case TAG_TIME_OFFSET:
+            // La longueur de cette option est toujours 4
+            if(options[i+1] == 4){
             temps = options[i + 2] * 256 * 256 * 256 +
                     options[i + 3] * 256 * 256 + options[i + 4] * 256 +
                     options[i + 5];
             afficher_temps("Time offset", temps);
+            }
+            else{
+                printf("Error/Protocol : option length is not 4\n");
+            }
             i += options[i + 1] + 2;
             break;
         case TAG_GATEWAY:
-            printf("Router: %d.%d.%d.%d\n", options[i + 2], options[i + 3],
-                   options[i + 4], options[i + 5]);
+
+            // La longueur de cette option est toujours est de 4 ou un multiple de 4
+            afficher_adresse_bootp("Gateway", i, options);
             i += options[i + 1] + 2;
             break;
         case TAG_TIME_SERVER:
-            printf("Time server: %d.%d.%d.%d\n", options[i + 2], options[i + 3],
-                   options[i + 4], options[i + 5]);
+            // La longueur de cette option est toujours est de 4 ou un multiple de 4
+            afficher_adresse_bootp("Time server", i, options);
             i += options[i + 1] + 2;
             break;
         case TAG_NAME_SERVER:
-            printf("Name server: %d.%d.%d.%d\n", options[i + 2], options[i + 3],
-                   options[i + 4], options[i + 5]);
+            // La longueur de cette option est toujours est de 4 ou un multiple de 4
+            afficher_adresse_bootp("Name server", i, options);
             i += options[i + 1] + 2;
             break;
         case TAG_DOMAIN_SERVER:
-            int taille = 0;
-            while (taille != options[i + 1]) {
-
-                if(options[i + 1] - taille >= 4 || options[i + 1] - taille % 4 ==  0)
-                {   
-                printf("Domain name server: %d.%d.%d.%d\n",
-                       options[i + 2 + taille], options[i + 3 + taille],
-                       options[i + 4 + taille], options[i + 5 + taille]);
-                }else{
-                printf("Error/Protocol : option length is not a multiple of 4\n");
-                break;
-                }
-                taille += 4;
-            }
-            printf("\n");
+            // La longueur de cette option est toujours est de 4 ou un multiple de 4
+            afficher_adresse_bootp("Domain name server", i, options);
             i += options[i + 1] + 2;
             break;
         case TAG_LOG_SERVER:
-            printf("Log server: %d.%d.%d.%d\n", options[i + 2], options[i + 3],
-                   options[i + 4], options[i + 5]);
+            // La longueur de cette option est toujours est de 4 ou un multiple de 4
+            afficher_adresse_bootp("Log server", i, options);
             i += options[i + 1] + 2;
             break;
         case TAG_COOKIE_SERVER:
-            printf("Cookie server: %d.%d.%d.%d\n", options[i + 2],
-                   options[i + 3], options[i + 4], options[i + 5]);
+            // La longueur de cette option est toujours est de 4 ou un multiple de 4
+            afficher_adresse_bootp("Cookie server", i, options);
             i += options[i + 1] + 2;
             break;
         case TAG_LPR_SERVER:
-            printf("LPR server: %d.%d.%d.%d\n", options[i + 2], options[i + 3],
-                   options[i + 4], options[i + 5]);
+            // La longueur de cette option est toujours est de 4 ou un multiple de 4
+            afficher_adresse_bootp("LPR server", i, options);
             i += options[i + 1] + 2;
             break;
         case TAG_IMPRESS_SERVER:
-            printf("Impress server: %d.%d.%d.%d\n", options[i + 2],
-                   options[i + 3], options[i + 4], options[i + 5]);
+            // La longueur de cette option est toujours est de 4 ou un multiple de 4
+            afficher_adresse_bootp("Impress server", i, options);
             i += options[i + 1] + 2;
             break;
         case TAG_RLP_SERVER:
-            printf("RLP server: %d.%d.%d.%d\n", options[i + 2], options[i + 3],
-                   options[i + 4], options[i + 5]);
+            // La longueur de cette option est toujours est de 4 ou un multiple de 4
+            afficher_adresse_bootp("RLP server", i, options);
             i += options[i + 1] + 2;
             break;
         case TAG_HOSTNAME:
+            // La longueur de cette option est toujours est de N
             printf("Hostname: ");
             afficher_info(options + i + 2, options[i + 1], 1);
             i += options[i + 1] + 2;
             break;
         case TAG_BOOTSIZE:
-            printf("Bootsize: %d\n", options[i + 2] * 256 + options[i + 3]);
+            // La longueur de cette option est toujours est de 2
+            printf("Boot File Size : ");
+            if(options[i+1] == 2)
+            {
+            printf("%d\n", options[i + 2] * 256 + options[i + 3]);    
+            }
             i += options[i + 1] + 2;
             break;
         case TAG_DUMPPATH:
@@ -242,6 +263,28 @@ void afficher_options_bootp(uint8_t *vendor_specific) {
             afficher_info(options + i + 2, options[i + 1], 1);
             i += options[i + 1] + 2;
             break;
+        case TAG_REASS_SIZE:
+            printf("Max DG Reassembly Size: %d\n",
+                   options[i + 2] * 256 + options[i + 3]);
+            i += options[i + 1] + 2;
+            break;
+        case TAG_DEF_TTL:
+            printf("Default IP TTL: %d\n", options[i + 2]);
+            i += options[i + 1] + 2;
+            break;
+        case TAG_MTU_TIMEOUT:
+             if(options[i+1] == 4){
+            temps = options[i + 2] * 256 * 256 * 256 +
+                    options[i + 3] * 256 * 256 + options[i + 4] * 256 +
+                    options[i + 5];
+            printf("Path MTU Aging Timeout: %d(s)\n", temps);
+            }
+            else{
+                printf("Error/Protocol : option length is not 4\n");
+            }
+            
+            i += options[i + 1] + 2;
+            break;
         case TAG_REQUESTED_IP:
             printf("Requested IP address: %d.%d.%d.%d\n", options[i + 2],
                    options[i + 3], options[i + 4], options[i + 5]);
@@ -264,7 +307,8 @@ void afficher_options_bootp(uint8_t *vendor_specific) {
                 printf("Server host names (%d)\n", options[i + 2]);
                 break;
             case 3:
-                printf("Boot file and server host names (%d)\n", options[i + 2]);
+                printf("Boot file and server host names (%d)\n",
+                       options[i + 2]);
                 break;
             default:
                 printf("(%d)\n", options[i + 2]);
@@ -334,11 +378,9 @@ void afficher_options_bootp(uint8_t *vendor_specific) {
                 else
                     printf("Type de matériel : (%d)\n", options[i + 2]);
 
-            
                 printf("Adresse MAC client: %.2x:%.2x:%.2x:%.2x:%.2x:%.2x\n",
-               options[i+3], options[i+4],
-               options[i+5], options[i+6],
-               options[i+7], options[i+8]);
+                       options[i + 3], options[i + 4], options[i + 5],
+                       options[i + 6], options[i + 7], options[i + 8]);
 
             } else {
                 afficher_info(options + i + 2, options[i + 1], 1);
@@ -464,33 +506,45 @@ void afficher_options_bootp(uint8_t *vendor_specific) {
             printf("\n");
             i += options[i + 1] + 2;
             break;
-        
+
+
         case TAG_TFTP_SERVER_ADDRESS:
-            int taille1 = 0;
-            while(taille1 != options[i+1]){
-                if(options[i + 1] - taille1 >= 4 || options[i + 1] - taille1 % 4 ==  0)
-                {
-                        
-                printf("TFTP server address: %d.%d.%d.%d\n", options[i + 2 + taille1],
-                   options[i + 3 + taille1], options[i + 4 + taille1], options[i + 5 + taille1]);
-                   taille1 += 4;
-                }else{
-                  printf("Error/Protocol : option length is not a multiple of 4\n");
-                break;  
-                }
-                
-            }
+
+            afficher_adresse_bootp("TFTP server address", i, options);
+
             i += options[i + 1] + 2;
             break;
-        
-        default :
-            printf("Option non reconnue (%d) -  Taille : %d\n",options[i], options[i + 1]);
+        default:
+            printf("Option non reconnue (%d) -  Taille : %d\n", options[i],
+                   options[i + 1]);
             i += options[i + 1] + 2;
             break;
         }
     }
 
     printf("End\n");
+}
+
+void afficher_adresse_bootp(char *description, int position, uint8_t *options) {
+
+    int taille = 0;
+    while (taille != options[position + 1]) {
+
+        if (options[position + 1] - taille >= 4 ||
+            options[position + 1] - taille % 4 == 0) {
+            printf(
+                "%s: %d.%d.%d.%d\n",description,
+                options[position + 2 + taille], options[position + 3 + taille],
+                options[position + 4 + taille], options[position + 5 + taille]);
+        } else {
+            printf("Error/Protocol : option length is not a multiple "
+                   "of 4\n");
+            break;
+        }
+        taille += 4;
+    }
+
+    printf("\n");
 }
 
 void afficher_temps(char *description, int temps) {

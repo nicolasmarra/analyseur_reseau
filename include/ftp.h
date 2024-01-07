@@ -9,7 +9,7 @@
     @param paquet: paquet le paquet à traiter
     @param taille: la taille du paquet
     @param verbosite: le niveau de verbosité
-    @return: le port
+    @return: le port utilisé en mode passif ou 0
 */
 int traiter_ftp(const u_char * paquet, int taille, int verbosite);
 
@@ -17,7 +17,7 @@ int traiter_ftp(const u_char * paquet, int taille, int verbosite);
 /*
     @brief: Fonction qui récupère le port de la requête FTP
     @param requete: la requête FTP
-    @return: le port
+    @return: le port utilisé en mode passif ou 0
 */
 int recuperer_port_fttp(char *requete);
 

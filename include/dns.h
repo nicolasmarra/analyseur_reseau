@@ -7,6 +7,7 @@
 #define NAME_SERVER 2
 #define ADITIONNAL_INFO 3
 
+
 struct dnshdr {
     uint16_t id;
     uint16_t flags;

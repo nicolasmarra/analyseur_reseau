@@ -18,8 +18,24 @@
     @param: taille, la taille du paquet
     @param: verbosite, le niveau de verbosite
 */
-void traiter_bootp(const u_char *paquet, int taille, int verbosite);
+void traiter_bootp(const u_char *paquet, int verbosite);
 
+
+/*
+    @brief: fonction qui affiche les adresses bootp
+    @param: description, la description des adresses à afficher
+    @param: position, la position des adresses a afficher
+    @param: options, les options contenant les adresses à afficher
+
+*/
+void afficher_adresse_bootp(char *description, int position, uint8_t * options);
+
+/*
+    @brief: fonction qui affiche le type de message bootp (request, reply, etc)
+    @param: type, le type de message bootp
+
+*/
+void afficher_type_message_bootp(uint8_t type);
 
 /*
     @brief: fonction qui affiche les options bootp

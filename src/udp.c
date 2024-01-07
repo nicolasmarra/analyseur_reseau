@@ -28,7 +28,7 @@ void traiter_port_udp(int port_source, int port_destination,
     if (port_source == IPPORT_BOOTPC || port_destination == IPPORT_BOOTPC ||
         port_source == IPPORT_BOOTPS || port_destination == IPPORT_BOOTPS) {
         if (taille > 0)
-            traiter_bootp(paquet, taille, verbosite);
+            traiter_bootp(paquet, verbosite);
     }
 
     if(port_source == PORT_DNS || port_destination == PORT_DNS){

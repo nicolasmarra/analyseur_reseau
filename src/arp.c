@@ -10,9 +10,9 @@ void traiter_arp(const u_char *paquet, int verbosite) {
     if (verbosite == 2) {
         // Verbosité de niveau 2
         afficher_type_materiel(ntohs(arp_header->ar_hrd));
-        printf(" ");
+        printf(" - ");
         afficher_type_protocole(ntohs(arp_header->ar_pro));
-        printf(" ");
+        printf(" - ");
         afficher_operation(ntohs(arp_header->ar_op));
         printf("\n");
 

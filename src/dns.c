@@ -9,7 +9,23 @@ void traiter_dns(const u_char *paquet, int taille, int verbosite) {
     struct dnshdr *dns_header;
     dns_header = (struct dnshdr *)(paquet);
 
-    if (verbosite > 1) {
+    // Verbosité de niveau 2
+    if (verbosite == 2) {
+        
+        if ((ntohs(dns_header->flags) & 0x8000) == 0) 
+            printf("Type : Requête ");
+         else 
+            printf("Type : Réponse ");
+        
+
+        printf(" - Questions : %d", ntohs(dns_header->questions));
+        printf(" - Answer RRs : %d", ntohs(dns_header->answers));
+        printf(" - Authority RRs : %d", ntohs(dns_header->authority));
+        printf(" - Additional RRs : %d\n", ntohs(dns_header->additional));
+    } 
+    // Verbosité de niveau 3
+    else if (verbosite ==  3) {
+        
          if ((ntohs(dns_header->flags) & 0x8000) == 0) 
             printf("Type : Requête\n");
          else 
@@ -22,9 +38,7 @@ void traiter_dns(const u_char *paquet, int taille, int verbosite) {
         printf("Answer RRs : %d\n", ntohs(dns_header->answers));
         printf("Authority RRs : %d\n", ntohs(dns_header->authority));
         printf("Additional RRs : %d\n", ntohs(dns_header->additional));
-    }
-
-    if (verbosite > 2) {
+   
 
         const u_char *requetes = paquet + sizeof(struct dnshdr);
 
@@ -36,6 +50,7 @@ void traiter_dns(const u_char *paquet, int taille, int verbosite) {
 
         // Affichage des réponses DNS
         position += sizeof(struct dnshdr);
+        
         // en raison de la compression de nom, qui est utilisée pour réduire la taille des paquets DNS, dans les réponses, les serveurs de noms et les informations supplémentaires
         //il faut donc passer le paquet complet aux fonctions suivantes
         position = afficher_info_dns(paquet, ntohs(dns_header->answers),
@@ -53,9 +68,11 @@ void traiter_dns(const u_char *paquet, int taille, int verbosite) {
 
 int afficher_questions_dns(const u_char *requetes, int nb_questions,
                            int position) {
+                            
+    // On vérifie qu'il y a des questions
     if (nb_questions > 0) {
 
-        printf("Requêtes DNS : \n");
+        printf("Questions DNS : \n");
         for (int i = 0; i < nb_questions; i++) {
 
             printf("- ");
@@ -82,11 +99,16 @@ int afficher_questions_dns(const u_char *requetes, int nb_questions,
 
 int afficher_nom_dns(const u_char *nom, int position) {
 
+
     while (nom[position] != 0) {
+        
+        // Si le premier octet est 0xC0, alors on a une compression de nom et on traite cette compression
+        // en faisant un appel recursif
         if (nom[position] == 0xC0) {
             afficher_nom_dns(nom, nom[position + 1]);
             return position + 1;
         }
+
 
         int taille = nom[position];
         for (int i = 0; i < taille; i++) {
@@ -137,6 +159,8 @@ void afficher_nombre_type_reponse(int type, int n) {
 
 int afficher_info_dns(const u_char *requetes, int nb_info, int position,
                       int type) {
+
+    // On vérifie qu'il y a des informations
     if (nb_info > 0) {
 
         printf("\n");
@@ -169,9 +193,11 @@ int afficher_info_dns(const u_char *requetes, int nb_info, int position,
             printf("Time to Live : %d \n", ntohl(ttl));
             position += 4;
 
+            // On récupère la longueur de la réponse
             uint16_t longueur = *(uint16_t *)(requetes + position);
             printf("Longueur : %d\n", ntohs(longueur));
             position += 2;
+
 
             int nouvelle_position = position;
             switch (ntohs(type)) {
@@ -360,7 +386,6 @@ int afficher_info_dns(const u_char *requetes, int nb_info, int position,
                 break;
             default:
                 printf("Inconnu");
-
                 break;
             }
             printf("\n");
