@@ -25,12 +25,12 @@ void traiter_tcp(const u_char *paquet, int taille, int verbosite) {
         printf("Numéro d'acquittement: %u\n", ntohl(tcp_header->ack_seq));
         printf("Data offset: %d\n", tcp_header->doff);
         printf("Reserved: %d\n", tcp_header->res1);
-        printf("Flags: %d ", tcp_header->res2);
+        printf("Flags:  0x%.2x ", tcp_header->th_flags);
         traiter_flags(tcp_header);
         printf("Fenêtre: %d\n", ntohs(tcp_header->window));
         printf("Somme de contrôle: 0x%.x\n", ntohs(tcp_header->check));
         printf("Urgent pointer: %d\n", ntohs(tcp_header->urg_ptr));
-
+        
         
         // Traitement des options
         traiter_options(tcp_header);
@@ -43,23 +43,24 @@ void traiter_tcp(const u_char *paquet, int taille, int verbosite) {
 }
 
 void traiter_flags(struct tcphdr *tcp_header) {
-    if (tcp_header->urg) {
-        printf("URG ");
+    
+    if (tcp_header->th_flags & TH_URG) {
+        printf("(URG) ");
     }
-    if (tcp_header->ack) {
-        printf("ACK ");
+    if (tcp_header->th_flags & TH_ACK) {
+        printf("(ACK) ");
     }
-    if (tcp_header->psh) {
-        printf("PSH ");
+    if (tcp_header->th_flags & TH_PUSH) {
+        printf("(PSH) ");
     }
-    if (tcp_header->rst) {
-        printf("RST ");
+    if (tcp_header->th_flags & TH_RST) {
+        printf("(RST) ");
     }
-    if (tcp_header->syn) {
-        printf("SYN ");
+    if (tcp_header->th_flags & TH_SYN) {
+        printf("(SYN) ");
     }
-    if (tcp_header->fin) {
-        printf("FIN ");
+    if (tcp_header->th_flags & TH_FIN) {
+        printf("(FIN) ");
     }
     printf("\n");
 }

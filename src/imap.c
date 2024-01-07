@@ -5,8 +5,15 @@ void traiter_imap(const u_char *paquet, int taille, int verbosite) {
     printf("IMAP\n");
 
     // Verbosité de niveau 2
+
+    char premiere_ligne[MAX_SIZE];
     if (verbosite == 2) {
+        if(recuperer_premiere_ligne((char *)paquet, premiere_ligne) == 0) {
+            afficher_requete_imap(premiere_ligne);
+        }else
+        {
         afficher_requete_imap((char *)paquet);
+        }
     }
 
     // Verbosité de niveau 3
@@ -21,13 +28,31 @@ void traiter_imap(const u_char *paquet, int taille, int verbosite) {
     }
 }
 
-void afficher_requete_imap(char *requete) {
-    // IMF
-    if (strstr(requete, "FROM") != NULL) {
-        printf("IMAP/IMF\n");
+
+
+int recuperer_premiere_ligne(char *requete, char *premiere_ligne)
+{
+    const char *index = strchr(requete, '\n');
+
+    if (index != NULL)
+    {
+        size_t taille = index - requete;
+
+        if (taille < MAX_SIZE)
+        {
+            strncpy(premiere_ligne, requete, taille);
+            premiere_ligne[taille] = '\0'; 
+        }
+        return 0;
     }
+
+    return -1;
+}
+
+void afficher_requete_imap(char *requete) {
+    
     // réponse
-    else if (strstr(requete, "OK") != NULL) {
+    if (strstr(requete, "OK") != NULL) {
         afficher_commande_imap(requete,2);
     }
     // requête

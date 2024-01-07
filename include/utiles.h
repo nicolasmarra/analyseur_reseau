@@ -29,8 +29,8 @@
 #include <string.h>
 #include "ctype.h"
 
-#define PROMISCUOUS 0
-#define CONFUS 1
+#define PROMISCUOUS 1
+#define CONFUS 0
 #define DELAI 1000
 
 #define PORT_FTP 21
