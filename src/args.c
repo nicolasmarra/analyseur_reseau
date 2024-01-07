@@ -45,12 +45,12 @@ int parse_args(int argc, char *argv[], args_t *args) {
     }
 
     if (args->interface == NULL && args->fichier == NULL) {
-        fprintf(stderr, "Vous devez choisir l'option -i ou l'option -f\n");
+        fprintf(stderr, "Vous devez choisir l'option -i ou l'option -o\n");
         afficher_aide();
         exit(EXIT_FAILURE);
     } else if (args->interface != NULL && args->fichier != NULL) {
         fprintf(stderr,
-                "Vous ne pouvez pas choisir les options -i et -f à la fois\n");
+                "Vous ne pouvez pas choisir les options -i et -o à la fois\n");
         afficher_aide();
         exit(EXIT_FAILURE);
     }

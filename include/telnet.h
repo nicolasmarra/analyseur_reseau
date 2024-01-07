@@ -11,7 +11,15 @@
 */
 void traiter_telnet(const u_char *paquet, int taille, int verbosite);
 
+/*
+    * Fonction qui affiche les commandes telnet
+    * @param commande : la commande a afficher
+*/
 void afficher_commandes_telnet(const uint8_t commande);
 
+/*
+    * Fonction qui affiche les options telnet
+    * @param option : l'option a afficher
+*/
 void afficher_options_telnet(const uint8_t option);
 #endif

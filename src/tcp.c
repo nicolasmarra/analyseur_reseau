@@ -9,11 +9,18 @@ void traiter_tcp(const u_char *paquet, int taille, int verbosite) {
     printf("\n");
     printf("TCP\n");
 
-    if (verbosite > 1) {
-        printf("Port source: %d\n", ntohs(tcp_header->source));
+    // Verbosité de niveau 2
+    if (verbosite == 2) {
+        printf("Port source: %d - ", ntohs(tcp_header->source));
         printf("Port destination: %d\n", ntohs(tcp_header->dest));
     }
-    if (verbosite > 2) {
+
+    // Verbosité de niveau 3
+    else if (verbosite == 3) {
+        printf("Port source: %d\n", ntohs(tcp_header->source));
+        printf("Port destination: %d\n", ntohs(tcp_header->dest));
+    
+        
         printf("Numéro de sequence: %u\n", ntohl(tcp_header->seq));
         printf("Numéro d'acquittement: %u\n", ntohl(tcp_header->ack_seq));
         printf("Data offset: %d\n", tcp_header->doff);
@@ -24,8 +31,8 @@ void traiter_tcp(const u_char *paquet, int taille, int verbosite) {
         printf("Somme de contrôle: 0x%.x\n", ntohs(tcp_header->check));
         printf("Urgent pointer: %d\n", ntohs(tcp_header->urg_ptr));
 
+        
         // Traitement des options
-
         traiter_options(tcp_header);
     }
 
@@ -62,21 +69,23 @@ void traiter_options(struct tcphdr *tcp_header) {
         printf("\n");
         printf("Options présentes: \n");
 
+
+        // On récupère les options
         uint8_t *options = (uint8_t *)tcp_header + sizeof(struct tcphdr);
 
+        // On calcule la taille des options
         int taille_options = (tcp_header->doff - 5) * 4;
 
         int i=0;
         while(i<taille_options)
         {
-
             switch (options[i]) {
             case TCPOPT_NOP:
-                printf("- NO-Operation (NOP) \n");
+                printf("> NO-Operation (NOP) \n");
                 i++;
                 break;
             case TCPOPT_MAXSEG:
-                printf("- Max Segment Size : ");
+                printf("> Max Segment Size : ");
                 if (taille_options - i >= 4) {
                     uint16_t taille = ntohs(*(uint16_t *)(options + i + 2));
                     printf("%d", taille);
@@ -86,11 +95,11 @@ void traiter_options(struct tcphdr *tcp_header) {
                 break;
 
             case TCPOPT_SACK_PERMITTED:
-                printf("- SACK Permitted\n");
+                printf("> SACK Permitted\n");
                 i += options[i+1];
                 break;
             case TCPOPT_SACK:
-                printf("- SACK ");
+                printf("> SACK ");
                 /*
                 if (taille_options - i >= 10) {
                     uint32_t bloc_1 = ntohl(*(uint32_t *)(options + i + 2));
@@ -105,7 +114,7 @@ void traiter_options(struct tcphdr *tcp_header) {
                     i++;
                 break;
             case TCPOPT_WINDOW:
-                printf("- Window Scale : ");
+                printf("> Window Scale : ");
                 if (taille_options - i >= 3) {
                     uint8_t window_scale = options[i + 2];
                     printf("%u\n", window_scale);
@@ -113,7 +122,7 @@ void traiter_options(struct tcphdr *tcp_header) {
                 i += options[i+1];
                 break;
             case TCPOPT_TIMESTAMP:
-                printf("- Timestamp : ");
+                printf("> Timestamp : ");
                 if (taille_options - i >= 10) {
                     uint32_t ts_val = ntohl(*(uint32_t *)(options + i + 2));
                     uint32_t ts_ecr = ntohl(*(uint32_t *)(options + i + 6));
@@ -123,11 +132,11 @@ void traiter_options(struct tcphdr *tcp_header) {
                 i += options[i+1];
                 break;
             case TCPOPT_EOL:
-                printf("- End of Options List (EOL)\n");
+                printf("> End of Options List (EOL)\n");
                 i = taille_options;
                 break;
             default:
-                printf("- Option inconnue\n");
+                printf("> Option inconnue\n");
                 if(taille_options - i >= 2)
                     i += options[i+1];
                 else
@@ -168,8 +177,7 @@ void traiter_port_tcp(int port_source, int port_destination,
     }
 
     // HTTP
-    if (port_source == PORT_HTTP || port_destination == PORT_HTTP ||
-        port_source == PORT_HTTP_ALT || port_destination == PORT_HTTP_ALT) {
+    if (port_source == PORT_HTTP || port_destination == PORT_HTTP) {
         if (taille > 0)
             traiter_http(paquet, taille, verbosite);
     }

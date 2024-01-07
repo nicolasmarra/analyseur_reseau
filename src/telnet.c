@@ -5,7 +5,13 @@ void traiter_telnet(const u_char *paquet, int taille, int verbosite) {
     printf("\n");
     printf("Telnet\n");
 
-    if (verbosite > 2) {
+    // Verbosite de niveau 2
+    if(verbosite == 2)
+    {
+        printf("TELNET DATA - Longueur : %d\n",taille);
+    }
+    // Verbosite de niveau 3
+    else if (verbosite == 3) {
 
         for (int i = 0; i < taille; i++) {
             // Les commandes Telnet sont précédées de 0xFF
@@ -18,12 +24,14 @@ void traiter_telnet(const u_char *paquet, int taille, int verbosite) {
                 i += 2;
                 printf("\n");
             }
-
             else {
                
                 if (isprint(paquet[i]))
                     printf("%c", paquet[i]);
-          
+                else
+                    printf(".");
+
+
             }
         }
 

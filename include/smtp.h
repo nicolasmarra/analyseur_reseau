@@ -12,4 +12,12 @@
 */
 void traiter_smtp(const u_char *paquet, int taille, int verbosite);
 
+/*
+    @brief: Fonction qui affiche les commandes SMTP
+    @param: requete, la requete à analyser
+    @param: taille, la taille du paquet
+
+*/
+void afficher_commandes_smtp(char *requete, int taille);
+
 #endif
