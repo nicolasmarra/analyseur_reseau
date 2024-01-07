@@ -89,11 +89,13 @@ void traiter_options(struct tcphdr *tcp_header) {
                 break;
             case TCPOPT_SACK:
                 printf("- SACK ");
+                /*
                 if (taille_options - i >= 10) {
-                    uint32_t valeur1 = ntohl(*(uint32_t *)(options + i + 2));
-                    uint32_t valeur2 = ntohl(*(uint32_t *)(options + i + 6));
-                    printf("Block 1: %u Block 2: %u", valeur1, valeur2);
+                    uint32_t bloc_1 = ntohl(*(uint32_t *)(options + i + 2));
+                    uint32_t bloc_2 = ntohl(*(uint32_t *)(options + i + 6));
+                    printf("Bloc 1: %u Bloc 2: %u", bloc_1, bloc_2);
                 }
+                */
                 printf("\n");
                 i += options[i+1];
                 break;
@@ -118,6 +120,13 @@ void traiter_options(struct tcphdr *tcp_header) {
             case TCPOPT_EOL:
                 printf("- End of Options List (EOL)\n");
                 i = taille_options;
+                break;
+            default:
+                printf("- Option inconnue\n");
+                if(taille_options - i >= 2)
+                    i += options[i+1];
+                else
+                    i = taille_options;
                 break;
             }
         }

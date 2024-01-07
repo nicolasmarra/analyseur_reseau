@@ -21,5 +21,13 @@ int traiter_ftp(const u_char * paquet, int taille, int verbosite);
 */
 int recuperer_port_fttp(char *requete);
 
+/*
+    @brief: Fonction qui affiche le type de requête FTP (requête ou réponse)
+    @param requete: la requête FTP
+    @param taille: la taille de la requête
+
+*/
+void afficher_type_requete_ftp(char *requete, int taille);
+
 
 #endif
