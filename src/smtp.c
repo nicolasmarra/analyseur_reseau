@@ -21,47 +21,53 @@ void traiter_smtp(const u_char *paquet, int taille, int verbosite) {
 }
 
 void afficher_commandes_smtp(char *requete, int taille) {
-    if (strstr(requete, "HELO") != NULL) {
+
+    // On convertit la requête en majuscule
+    for (int i = 0; i < taille; i++) {
+        requete[i] = toupper(requete[i]);
+    }
+
+    if (strncmp(requete, "HELO",4) == 0) {
         printf("C : HELO\n");
-    } else if (strstr(requete, "EHLO") != NULL) {
+    } else if (strncmp(requete, "EHLO",4) == 0) {
         printf("C : EHLO\n");
-    } else if (strstr(requete, "MAIL") != NULL) {
+    } else if (strncmp(requete, "MAIL",4) == 0) {
         printf("C : MAIL\n");
-    } else if (strstr(requete, "RCPT") != NULL) {
+    } else if (strncmp(requete, "RCPT",4) == 0) {
         printf("C : RCPT\n");
 
-    } else if (strstr(requete, "DATA") != NULL) {
+    } else if (strncmp(requete, "DATA",4) == 0) {
         printf("C : DATA\n");
 
-    } else if (strstr(requete, "RSET") != NULL) {
+    } else if (strncmp(requete, "RSET",4) == 0) {
         printf("C : RSET\n");
-    } else if (strstr(requete, "NOOP") != NULL) {
+    } else if (strncmp(requete, "NOOP",4) == 0) {
         printf("C : NOOP\n");
-    } else if (strstr(requete, "QUIT") != NULL) {
+    } else if (strncmp(requete, "QUIT",4) == 0) {
         printf("C : QUIT\n");
-    } else if (strstr(requete, "STARTTLS") != NULL) {
+    } else if (strncmp(requete, "STARTTLS",8) == 0) {
         printf("C : STARTTLS\n");
-    } else if (strstr(requete, "AUTH") != NULL) {
+    } else if (strncmp(requete, "AUTH",4) == 0) {
         printf("C : AUTH\n");
-    } else if (strstr(requete, "VRFY") != NULL) {
+    } else if (strncmp(requete, "VRFY",4) == 0) {
         printf("C : VRFY\n");
-    } else if (strstr(requete, "EXPN") != NULL) {
+    } else if (strncmp(requete, "EXPN",4) == 0) {
         printf("C : EXPN\n");
-    } else if (strstr(requete, "HELP") != NULL) {
+    } else if (strncmp(requete, "HELP",4) == 0) {
         printf("C : HELP\n");
-    } else if (strstr(requete, "TURN") != NULL) {
+    } else if (strncmp(requete, "TURN",4) == 0) {
         printf("C : TURN\n");
-    } else if (strstr(requete, "ETRN") != NULL) {
+    } else if (strncmp(requete, "ETRN",4) == 0) {
         printf("C : ETRN\n");
-    } else if (strstr(requete, "SEND") != NULL) {
+    } else if (strncmp(requete, "SEND",4) == 0) {
         printf("C : SEND\n");
-    } else if (strstr(requete, "SAML") != NULL) {
+    } else if (strncmp(requete, "SAML",4) == 0) {
         printf("C : SAML\n");
-    } else if (strstr(requete, "USER") != NULL) {
+    } else if (strncmp(requete, "USER",4) == 0) {
         printf("C : USER\n");
-    } else if (strstr(requete, "PASS") != NULL) {
+    } else if (strncmp(requete, "PASS",4) == 0) {
         printf("C : PASS\n");
-    } else if (taille > 3 && requete[0] >= '0' && requete[0] <= '9' &&
+    }else if (taille > 3 && requete[0] >= '0' && requete[0] <= '9' &&
              requete[1] >= '0' && requete[1] <= '9' && requete[2] >= '0' &&
              requete[2] <= '9')
      {
