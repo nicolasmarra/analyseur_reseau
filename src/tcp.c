@@ -126,7 +126,7 @@ void traiter_options(struct tcphdr *tcp_header) {
                 if(taille_options - i >= 2)
                     i += options[i+1];
                 else
-                    i = taille_options;
+                    i++;
                 break;
             }
         }
